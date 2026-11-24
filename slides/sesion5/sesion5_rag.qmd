@@ -1,0 +1,320 @@
+---
+title: "Session 5 (II) — Retrieval-Augmented Generation"
+subtitle: "AI Agents for Banking and Regulation · MBRF Data Analytics"
+author: "Alberto Torres · Komorebi AI"
+date: today
+date-format: "MMMM YYYY"
+format:
+  revealjs:
+    output-file: sesion5_rag.html
+---
+
+## Where we left off
+
+Yesterday: an agent is an **LLM + tools + a loop**, and it can read Demo Bank's data.
+
+. . .
+
+Today, one more tool: **search the regulation**.
+
+- How does a model answer from **our** documents — the CRR, internal policies, inspection reports?
+- How do we know the answer comes from them, and from **which article**?
+
+. . .
+
+**→ Notebook 03 · RAG over the CRR**
+
+---
+
+## Why not just ask the model?
+
+It may even get the figure right: the CRR is public and was in its training data. But:
+
+- Which version? The text changes (CRR2, CRR3, transitional periods…), and the model's knowledge stops at its training date.
+- Is the article number right, or only plausible? You cannot check it.
+- Your **internal** documents were never in its training data.
+
+. . .
+
+**Retrieval-augmented generation (RAG):**
+
+::: {.model-flow}
+::: {.model-box}
+Question
+:::
+::: {.model-arrow}
+→
+:::
+::: {.model-box}
+**Retrieve**<br>relevant excerpts
+:::
+::: {.model-arrow}
+→
+:::
+::: {.model-box}
+**Augment**<br>the prompt with them
+:::
+::: {.model-arrow}
+→
+:::
+::: {.model-box}
+**Generate**<br>answer + citations
+:::
+:::
+
+---
+
+## Two phases
+
+**Indexing** — once, and again when the documents change:
+
+::: {.model-flow}
+::: {.model-box}
+Documents
+:::
+::: {.model-arrow}
+→
+:::
+::: {.model-box}
+**Chunk**
+:::
+::: {.model-arrow}
+→
+:::
+::: {.model-box}
+**Embed**<br>text → vector
+:::
+::: {.model-arrow}
+→
+:::
+::: {.model-box}
+**Index**<br>vectors + metadata
+:::
+:::
+
+**Query** — every question:
+
+::: {.model-flow}
+::: {.model-box}
+Question
+:::
+::: {.model-arrow}
+→
+:::
+::: {.model-box}
+Embed
+:::
+::: {.model-arrow}
+→
+:::
+::: {.model-box}
+**Search** the index<br>top *k* chunks
+:::
+::: {.model-arrow}
+→
+:::
+::: {.model-box}
+LLM answers<br>from those chunks
+:::
+:::
+
+. . .
+
+Our corpus: the CRR, consolidated text of June 2026 — 737 articles, ~465,000 tokens. Indexing it takes **seconds** and costs **cents**.
+
+---
+
+## Block 1 · Chunking {.section-divider}
+
+What is a "piece" of a document?
+
+---
+
+## Cut where the document has seams
+
+We retrieve **pieces**, not documents: Article 4 alone is 60,000 characters, and too much context dilutes the answer and costs money.
+
+| Strategy | How | Problem / when |
+|---|---|---|
+| Fixed size | every *N* characters | cuts sentences and lists; a piece loses its context |
+| Recursive | paragraphs, then sentences, then characters | good generic default |
+| **By structure** | article → numbered paragraphs | legal and regulatory text: natural units, citable |
+
+. . .
+
+And give every chunk a **header** so it still says where it comes from:
+
+```text
+CRR Article 92 — Own funds requirements (PART THREE — CAPITAL REQUIREMENTS)
+1. Subject to Articles 93 and 94, institutions shall at all times satisfy ...
+```
+
+The CRR becomes **1,127 chunks** of at most 3,000 characters.
+
+---
+
+## Block 2 · Embeddings {.section-divider}
+
+Searching by meaning
+
+---
+
+## Text → vector
+
+An embedding model turns a text into a vector (1,536 or 3,072 numbers). Similar meanings point in similar directions; we compare them with the **cosine similarity**.
+
+| | capital conservation buffer |
+|---|---|
+| colchón de conservación de capital | **0.47** |
+| a bank must hold extra CET1 capital in good times | **0.45** |
+| mortgage interest rate for first-time buyers | 0.15 |
+
+. . .
+
+- A translation and a paraphrase score high; mortgages do not. Use **the same model** for documents and questions.
+- A **vector store** finds the nearest vectors: here a NumPy matrix; in production Chroma, pgvector… with filters and **access control per document**.
+
+---
+
+## Block 3 · Search {.section-divider}
+
+Meaning, words, or both
+
+---
+
+## Semantic vs keyword search
+
+:::: {.columns}
+::: {.column width="50%"}
+**Semantic** (embeddings)
+
+*"Is there a cap on how much a bank can lend to one borrower?"*
+
+→ **Art. 395** · Limits to large exposures
+
+No word in common: *cap*/limits, *lend*/exposure, *borrower*/client.
+:::
+::: {.column width="50%"}
+**Keyword** (BM25)
+
+*"What does Article 412 require?"*
+
+→ semantic: Art. 6, 459, 414… ✗
+
+→ keyword: Art. 414, **412** ✓
+
+Identifiers, codes, exact terms: `LCR`, `EBA/GL/2020/06`, `Article 412`.
+:::
+::::
+
+. . .
+
+**Hybrid search** runs both and merges the rankings (*reciprocal rank fusion*: each result scores `1 / (60 + rank)` in each list). Optionally, a **reranker** — a specialised model or the LLM itself — reorders the top 15–50 candidates.
+
+---
+
+## Which one is better? Measure it
+
+A **golden set**: questions whose correct article we know. Is it in the top 5?
+
+| Method | Hits (12 questions) | Fails on |
+|---|---|---|
+| Semantic | 11 | *"What does Article 412 require?"* |
+| Keyword (BM25) | 10 | *"Which items qualify as CET1?"*, *"What must be deducted from CET1?"* |
+| Hybrid | 11 | *"Which items qualify as CET1?"* |
+
+. . .
+
+- No method wins everywhere: decide every change **by the number**, with 50–100 questions written with the business.
+- For exact references there is a simpler answer: if the user names an article, **look it up directly**.
+- If retrieval fails, **no prompt fixes the answer**.
+
+---
+
+## Block 4 · Generation {.section-divider}
+
+Answers you can check
+
+---
+
+## Answer with citations
+
+```text
+Answer the question using only the CRR excerpts below.
+Cite the article for every statement, like (Art. 92(1)).
+If the excerpts do not contain the answer, say so.
+
+{the 5 retrieved chunks}
+
+Question: {question}
+```
+
+. . .
+
+- The **sources** are returned by your code, from the retrieved chunks: they cannot be invented.
+- The **citations** in the text are written by the model: check them against the sources. A citation that was not retrieved means the model answered from memory.
+- "The excerpts do not say" is a **good** answer — ask it something outside the corpus and check it says so.
+
+---
+
+## What goes wrong
+
+| Symptom | Usual cause |
+|---|---|
+| Right topic, wrong article | chunks too large, or no header with the article |
+| Answer misses half the rule | the rule spans several articles; *k* too small |
+| Fails on "Article 412", "LCR" | semantic-only search: add keyword / direct lookup |
+| Confident answer, no support | weak prompt, no citation check |
+| Out-of-date rule | old version indexed: re-index when the source changes |
+| Strange instructions followed | **prompt injection** inside a document (Thursday) |
+
+---
+
+## RAG as a tool
+
+The retrieval becomes two more **tools** of the agent from notebook 02:
+
+- `search_regulation(query)` — hybrid search, for natural-language questions;
+- `get_article(number)` — direct lookup, when an article is named.
+
+. . .
+
+*"Does Demo Bank meet the CRR minimum own funds ratios at 30 September 2026?"*
+
+::: {.model-flow}
+::: {.model-box}
+`get_capital_ratios`<br>("2026-09-30")
+:::
+::: {.model-arrow}
+\+
+:::
+::: {.model-box}
+`search_regulation`<br>("minimum own funds requirements…")
+:::
+::: {.model-arrow}
+→
+:::
+::: {.model-box}
+CET1 11.59 % vs 4.5 %<br>(Art. 92(1)) …
+:::
+:::
+
+The agent decides when to search, can search several times, and combines the regulation with the bank's figures. This is **agentic RAG**.
+
+. . .
+
+**→ Notebook 03, sections 6–8**
+
+---
+
+## Takeaways
+
+- RAG = **retrieve** + **augment** + **generate**: answers from *your* documents, with sources from *your* code.
+- **Chunk** along the document's structure, and keep the context in every chunk.
+- **Semantic** search finds meaning, **keyword** search finds identifiers, **hybrid** combines them; exact references deserve a direct lookup.
+- **Measure** retrieval with a golden set; check citations against sources.
+- As a **tool**, retrieval is one more capability of the agent.
+
+. . .
+
+**Next week (session 6):** in groups, you build your own agent for a banking or regulatory use case — and present it to the panel.

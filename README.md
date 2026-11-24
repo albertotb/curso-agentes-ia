@@ -16,7 +16,7 @@ Hands-on materials for the AI sessions of the Data Analytics module of the [Mast
 | [02 · Agents with LangChain and LangGraph](notebooks/sesion5/02_agents_with_langchain.ipynb) | `create_agent`, provider switch, middleware (limits, human in the loop), memory, LangGraph workflows | [![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/albertotb/curso-agentes-ia/blob/main/notebooks/sesion5/02_agents_with_langchain.ipynb) |
 | [03 · RAG over the CRR](notebooks/sesion5/03_rag_over_regulation.ipynb) | Chunking, embeddings, semantic / keyword / hybrid search, evaluation with a golden set, answers with citations, RAG as an agent tool | [![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/albertotb/curso-agentes-ia/blob/main/notebooks/sesion5/03_rag_over_regulation.ipynb) |
 
-Slides: [`slides/sesion5/sesion5.qmd`](slides/sesion5/sesion5.qmd) (Quarto, reveal.js).
+Slides (Quarto, reveal.js): [Thursday — tools and agents](slides/sesion5/sesion5.qmd) · [Friday — RAG](slides/sesion5/sesion5_rag.qmd).
 
 ### Session 6 — Guided agent construction
 
@@ -85,7 +85,7 @@ curso-agentes-ia/
 ├── _quarto.yml              # Common configuration of the slides
 ├── slides/
 │   ├── _theme/komorebi.scss # reveal.js theme
-│   └── sesion5/sesion5.qmd
+│   └── sesion5/             # sesion5.qmd (Thursday), sesion5_rag.qmd (Friday)
 └── notebooks/
     └── sesion5/
 ```
