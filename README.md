@@ -28,6 +28,20 @@ The notebooks work with **OpenAI** or **Google Gemini**. Set `PROVIDER` in the f
 
 Never paste a key into a notebook cell or commit it.
 
+### Gemini API key (free tier, personal account)
+
+1. In an incognito window, sign in with your personal Google account and open <https://aistudio.google.com/apikey>.
+2. Accept the terms if prompted.
+3. Click **Create API key** and choose a new project or a personal one **without billing** (if the project has billing enabled, it is no longer free tier).
+4. Check that the **Plan** column for the key says **Free**.
+5. Save the key as described above (Colab secret or `.env`) and test it:
+   ```bash
+   source .env
+   curl -s -H "x-goog-api-key: $GEMINI_API_KEY" https://generativelanguage.googleapis.com/v1beta/models | head -20
+   ```
+
+Outside the EEA, Switzerland and the UK, Google may use free-tier prompts and responses to improve its products; from those regions the [Gemini API terms](https://ai.google.dev/gemini-api/terms) apply the paid-tier data rules to free usage as well. Either way, do not send confidential data. The request limits for each model are in AI Studio → **Rate limits**.
+
 ## Data
 
 All data is in [`data/raw/`](data/raw/). See [`data/README.md`](data/README.md).
