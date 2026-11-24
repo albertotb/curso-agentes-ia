@@ -59,6 +59,7 @@ def parse(html: bytes, celex: str) -> list[dict]:
         number = (
             art.select_one("p.title-article-norm")
             .get_text(strip=True)
+            .replace("\xa0", " ")
             .removeprefix("Article ")
             .strip()
         )
