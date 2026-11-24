@@ -14,6 +14,7 @@ Hands-on materials for the AI sessions of the Data Analytics module of the [Mast
 |---|---|---|
 | [01 · Tool calling from scratch](notebooks/sesion5/01_tool_calling_from_scratch.ipynb) | The agent loop by hand with the provider SDK; tool design; human approval for actions | [![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/albertotb/curso-agentes-ia/blob/main/notebooks/sesion5/01_tool_calling_from_scratch.ipynb) |
 | [02 · Agents with LangChain and LangGraph](notebooks/sesion5/02_agents_with_langchain.ipynb) | `create_agent`, provider switch, middleware (limits, human in the loop), memory, LangGraph workflows | [![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/albertotb/curso-agentes-ia/blob/main/notebooks/sesion5/02_agents_with_langchain.ipynb) |
+| [03 · RAG over the CRR](notebooks/sesion5/03_rag_over_regulation.ipynb) | Chunking, embeddings, semantic / keyword / hybrid search, evaluation with a golden set, answers with citations, RAG as an agent tool | [![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/albertotb/curso-agentes-ia/blob/main/notebooks/sesion5/03_rag_over_regulation.ipynb) |
 
 Slides: [`slides/sesion5/sesion5.qmd`](slides/sesion5/sesion5.qmd) (Quarto, reveal.js).
 
