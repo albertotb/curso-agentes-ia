@@ -1,0 +1,21 @@
+.env
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Files the notebooks download when run outside the repo (e.g. Colab)
+notebooks/**/bank.db
+notebooks/**/crr_articles.jsonl
+
+# Sistema operativo
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
