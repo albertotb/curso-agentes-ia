@@ -23,8 +23,15 @@ Notas para asistentes de IA trabajando en este repo. Mantener este archivo **bre
 uv sync                    # instalar/actualizar entorno
 uv run jupyter lab         # arrancar notebooks
 uv run nbstripout --install  # una vez por clon, activa el filtro de git
+quarto preview slides/sesion5/sesion5.qmd  # slides con recarga en vivo
 ```
 
 ## Flujo de trabajo con notebooks
 
 - Tras editar cualquier `.ipynb`, ejecutar `uv run ruff format notebooks/` y `uv run ruff check notebooks/`.
+
+## Flujo de trabajo con slides (Quarto)
+
+- Slides en `slides/sesionN/sesionN.qmd`, configuración común en `_quarto.yml`, tema en `slides/_theme/komorebi.scss`. El HTML renderizado no se versiona.
+- Tras cambiar una slide, comprobar con `playwright-cli` a 1280×800 que ninguna se desborda (`section.scrollHeight` > 800 con los fragments desactivados).
+- Diagramas de flujo sencillos con las cajas `.model-flow` del tema, no con Mermaid: los flowcharts de Mermaid recortan las etiquetas con este tema. Mermaid solo para el diagrama de secuencia.

@@ -15,6 +15,8 @@ Hands-on materials for the AI sessions of the Data Analytics module of the [Mast
 | [01 · Tool calling from scratch](notebooks/sesion5/01_tool_calling_from_scratch.ipynb) | The agent loop by hand with the provider SDK; tool design; human approval for actions | [![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/albertotb/curso-agentes-ia/blob/main/notebooks/sesion5/01_tool_calling_from_scratch.ipynb) |
 | [02 · Agents with LangChain and LangGraph](notebooks/sesion5/02_agents_with_langchain.ipynb) | `create_agent`, provider switch, middleware (limits, human in the loop), memory, LangGraph workflows | [![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/albertotb/curso-agentes-ia/blob/main/notebooks/sesion5/02_agents_with_langchain.ipynb) |
 
+Slides: [`slides/sesion5/sesion5.qmd`](slides/sesion5/sesion5.qmd) (Quarto, reveal.js).
+
 ### Session 6 — Guided agent construction
 
 Group project: each group (~4 students) builds an agent for a banking or regulatory use case and presents it to a panel.
@@ -79,6 +81,10 @@ curso-agentes-ia/
 │   └── cai/
 │       └── utils.py         # Setup helpers: API keys, model clients, data loading
 ├── scripts/                 # Rebuild the data in data/raw/
+├── _quarto.yml              # Common configuration of the slides
+├── slides/
+│   ├── _theme/komorebi.scss # reveal.js theme
+│   └── sesion5/sesion5.qmd
 └── notebooks/
     └── sesion5/
 ```
