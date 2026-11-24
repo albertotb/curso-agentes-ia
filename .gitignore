@@ -24,3 +24,5 @@ Thumbs.db
 /.quarto/
 slides/**/*.html
 slides/**/*_files/
+
+**/*.quarto_ipynb
