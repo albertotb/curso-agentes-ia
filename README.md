@@ -19,9 +19,14 @@ Hands-on materials for the AI sessions of the Data Analytics module of the [Mast
 
 Group project: each group (~4 students) builds an agent for a banking or regulatory use case and presents it to a panel.
 
+## Running the notebooks
+
+- **Colab:** open a notebook with its badge above. Its first cell, `%pip install -q git+https://github.com/albertotb/curso-agentes-ia`, installs the dependencies and the course helpers (`from cai import utils`); the data is downloaded on first use.
+- **Local:** see [Local setup](#local-setup).
+
 ## API keys
 
-The notebooks work with **OpenAI** or **Google Gemini**. Set `PROVIDER` in the first code cell and provide the matching key:
+The notebooks work with **OpenAI** or **Google Gemini**. Set `PROVIDER` in the setup cell and provide the matching key:
 
 - **Colab:** add a secret (key icon in the left bar) named `OPENAI_API_KEY` or `GEMINI_API_KEY` and give the notebook access to it.
 - **Local:** copy `.env.template` to `.env` and fill in the key.
@@ -70,6 +75,9 @@ curso-agentes-ia/
 ├── data/
 │   ├── README.md
 │   └── raw/                 # bank.db, crr_articles.jsonl (versioned)
+├── src/
+│   └── cai/
+│       └── utils.py         # Setup helpers: API keys, model clients, data loading
 ├── scripts/                 # Rebuild the data in data/raw/
 └── notebooks/
     └── sesion5/

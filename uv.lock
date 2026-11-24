@@ -384,10 +384,8 @@ wheels = [
 [[package]]
 name = "curso-agentes-ia"
 version = "0.1.0"
-source = { virtual = "." }
+source = { editable = "." }
 dependencies = [
-    { name = "ipykernel" },
-    { name = "jupyterlab" },
     { name = "langchain" },
     { name = "langchain-google-genai" },
     { name = "langchain-openai" },
@@ -398,14 +396,14 @@ dependencies = [
 
 [package.dev-dependencies]
 dev = [
+    { name = "ipykernel" },
+    { name = "jupyterlab" },
     { name = "nbstripout" },
     { name = "ruff" },
 ]
 
 [package.metadata]
 requires-dist = [
-    { name = "ipykernel", specifier = ">=6.29" },
-    { name = "jupyterlab", specifier = ">=4.1" },
     { name = "langchain", specifier = ">=1.5,<2" },
     { name = "langchain-google-genai", specifier = ">=4.5" },
     { name = "langchain-openai", specifier = ">=1.8" },
@@ -416,6 +414,8 @@ requires-dist = [
 
 [package.metadata.requires-dev]
 dev = [
+    { name = "ipykernel", specifier = ">=6.29" },
+    { name = "jupyterlab", specifier = ">=4.1" },
     { name = "nbstripout", specifier = ">=0.9.1" },
     { name = "ruff", specifier = ">=0.4" },
 ]
