@@ -1,0 +1,214 @@
+/*-- scss:defaults --*/
+
+// Komorebi — tema basado en `serif`. Ajustes orientados a densidad
+// vertical para que las slides con varios fragments quepan en 1280×800.
+
+// Tipografía: Source Serif Pro (Google Fonts). Sustituye a Palatino del
+// tema `serif`, cuyo fallback en Linux (FreeSerif) tiene métricas rotas
+// en algunas glifos en regular (notablemente la `r`).
+$font-family-sans-serif: "Source Serif Pro", Palatino, FreeSerif, serif !default;
+$presentation-font-family: "Source Serif Pro", Palatino, FreeSerif, serif !default;
+$presentation-heading-font: "Source Serif Pro", Palatino, FreeSerif, serif !default;
+
+/*-- scss:rules --*/
+
+@import url('https://fonts.googleapis.com/css2?family=Source+Serif+Pro:ital,wght@0,400;0,600;0,700;1,400;1,600&display=swap');
+
+.reveal,
+.reveal h1, .reveal h2, .reveal h3, .reveal h4,
+.reveal p, .reveal li, .reveal blockquote, .reveal figcaption {
+  font-family: "Source Serif Pro", Palatino, FreeSerif, serif;
+}
+
+// Subir el peso de los encabezados: semibold (600) queda con trazo fino
+// en Source Serif Pro y se ve "blando" sobre el gris #383d3d.
+.reveal h1, .reveal h2, .reveal h3, .reveal h4 {
+  font-weight: 700;
+}
+
+.reveal {
+  // Listas y párrafos — mayor especificidad para vencer a `.reveal section p`
+  .slides section p {
+    margin: 0 0 0.35em 0;
+    line-height: 1.25;
+  }
+  .slides section ul,
+  .slides section ol {
+    margin: 0 0 0.35em 1.2em;
+  }
+  .slides section li {
+    line-height: 1.25;
+    margin-bottom: 0.1em;
+  }
+  .slides section li > ul,
+  .slides section li > ol {
+    margin-top: 0.05em;
+    margin-bottom: 0.15em;
+  }
+
+  // Encabezados — menos aire vertical
+  .slides section h1,
+  .slides section h2,
+  .slides section h3 {
+    margin-top: 0;
+    margin-bottom: 0.25em;
+    line-height: 1.1;
+  }
+
+  // Figuras: restringir alturas para que no monopolicen
+  .slides figure,
+  .slides .quarto-figure,
+  .slides .cell-output-display {
+    margin: 0.2em auto;
+  }
+  .slides figure img,
+  .slides figure svg,
+  .slides .cell-output-display img,
+  .slides .cell-output-display svg {
+    max-height: 360px;
+    width: auto;
+  }
+
+  // Variante para diapositivas con sólo una figura grande (sin texto debajo).
+  // Aplicar añadiendo `{.large-fig}` al heading: `## Mi título {.large-fig}`.
+  .slides section.large-fig figure img,
+  .slides section.large-fig figure svg,
+  .slides section.large-fig .cell-output-display img,
+  .slides section.large-fig .cell-output-display svg {
+    max-height: 660px;
+    max-width: 100%;
+  }
+
+  // Variante intermedia: figura más grande que el default pero dejando hueco
+  // para 1–2 líneas de texto debajo. `## Mi título {.medium-fig}`.
+  .slides section.medium-fig figure img,
+  .slides section.medium-fig figure svg,
+  .slides section.medium-fig .cell-output-display img,
+  .slides section.medium-fig .cell-output-display svg {
+    max-height: 440px;
+    max-width: 100%;
+  }
+
+  .slides figcaption {
+    margin-top: 0.15em;
+    font-size: 0.55em;
+    line-height: 1.2;
+  }
+
+  // Bloques de código: fuente algo más pequeña y padding compacto.
+  // `margin: 0.6em 0` separa el bloque del texto/párrafos adyacentes.
+  .slides div.sourceCode {
+    margin: 0.6em 0;
+  }
+  .slides pre {
+    padding: 0.3em 0.6em;
+    line-height: 1.15;
+  }
+  .slides pre,
+  .slides pre code {
+    font-size: 0.65em;
+  }
+
+  // Líneas numeradas: Pandoc coloca el número con `position: relative` y un
+  // shift negativo (-4em en el span, -1em en el ::before) para sacarlo al
+  // gutter izquierdo del pre. Eso deja contenido visual fuera del
+  // div.sourceCode → con `overflow: auto`, el browser muestra scrollbar
+  // horizontal fantasma. Además reveal.css fuerza `.reveal a {position: relative}`
+  // y Pandoc fuerza `pre>code.sourceCode {position: relative}`, así que
+  // `position: absolute` en el ::before no se ancla al pre sino al <code> o <a>.
+  //
+  // Estrategia: anular todos los shifts y dejar el número en flujo inline
+  // estático al inicio de la línea (inline-block con width fija → gutter).
+  // El código pierde ~3em de ancho útil pero ya no hay scrollbar fantasma.
+  .slides pre.numberSource {
+    margin-left: 0;
+    padding-left: 0;
+    box-sizing: border-box;   // Quarto fija width:100%; sin border-box el padding-right (de .slides pre) lo desborda
+  }
+  .slides pre.numberSource code > span {
+    position: static;
+    left: auto;
+  }
+  .slides pre.numberSource code > span > a:first-child {
+    position: static;
+  }
+  .slides pre.numberSource code > span > a:first-child::before {
+    position: static;
+    left: auto;
+    width: 1.5em;
+    padding: 0 1em 0 0.3em;  // hueco pequeño a la izquierda del nº, más ancho a la derecha (separa del código)
+    text-align: right;
+    color: #b5b5b5;       // gris claro para que el número no compita con el código
+  }
+
+  // Output de celdas (texto plano de print/df.head)
+  .slides .cell-output pre {
+    font-size: 0.55em;
+    line-height: 1.2;
+  }
+
+  // Tablas: margen externo para separarlas del texto/párrafos adyacentes.
+  .slides table {
+    font-size: 0.7em;
+    margin: 0.6em 0;
+  }
+  .slides th,
+  .slides td {
+    padding: 0.2em 0.5em;
+  }
+
+  // Espacio entre fragments
+  .slides .fragment {
+    margin-top: 0.05em;
+  }
+
+  // Slides marcadas como "divisor de sección" — mismo look que el antiguo
+  // título de nivel-1 (centrado, h2 grande), pero sin nesting vertical (los
+  // urls quedan #/N en vez de #/H/V y `quarto preview` recarga sin perder
+  // la slide actual).
+  .slides section.section-divider {
+    text-align: center;
+  }
+  .slides section.section-divider h2 {
+    font-size: 2.2em;
+    margin-top: 1.2em;
+    margin-bottom: 0.4em;
+  }
+
+  // Diagramas hechos a mano con cajas y flechas
+  .slides .model-flow {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.3em;
+    margin: 0.6em auto 0.9em;
+    flex-wrap: nowrap;
+  }
+  .slides .model-flow .model-box {
+    border: 1px solid #888;
+    background: #f5f5f5;
+    border-radius: 4px;
+    padding: 0.3em 0.55em;
+    text-align: center;
+    font-size: 0.65em;
+    line-height: 1.2;
+    white-space: nowrap;
+  }
+  .slides .model-flow .model-box p {
+    margin: 0;
+  }
+  .slides .model-flow .model-arrow {
+    font-size: 0.9em;
+    color: #666;
+  }
+  .slides .model-flow .model-stack {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25em;
+  }
+  .slides .model-flow .model-row {
+    display: flex;
+    align-items: center;
+    gap: 0.3em;
+  }
+}

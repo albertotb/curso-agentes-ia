@@ -19,3 +19,8 @@ Thumbs.db
 # IDE
 .vscode/
 .idea/
+
+# Quarto (slides are rendered for preview and publishing, not versioned)
+/.quarto/
+slides/**/*.html
+slides/**/*_files/

@@ -1,0 +1,27 @@
+project:
+  type: default
+  render:
+    - "slides/**/*.qmd"
+
+# Common configuration for all the course slides; each session can override it in its own YAML.
+format:
+  revealjs:
+    theme: [serif, slides/_theme/komorebi.scss]
+    width: 1280
+    height: 800
+    footer: "AI Agents for Banking and Regulation · MBRF"
+    slide-number: c/t
+    show-slide-number: all
+    hash-type: number          # URLs like #/9, so quarto preview reloads on the same slide
+    transition: fade
+    transition-speed: fast
+    highlight-style: github
+    code-overflow: wrap
+    incremental: false
+    progress: true
+    history: true
+    embed-resources: false
+    mermaid:
+      theme: neutral
+
+lang: en
