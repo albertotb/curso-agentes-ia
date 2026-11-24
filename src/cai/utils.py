@@ -1,12 +1,14 @@
 """Setup helpers shared by the course notebooks: API keys, model clients and data."""
 
 import contextlib
+import json
 import os
 import sqlite3
 import urllib.request
 from pathlib import Path
 
 DEFAULT_MODELS = {"openai": "gpt-5.4-mini", "gemini": "gemini-3.5-flash-lite"}
+EMBEDDING_MODELS = {"openai": "text-embedding-3-small", "gemini": "gemini-embedding-001"}
 KEY_NAMES = {"openai": "OPENAI_API_KEY", "gemini": "GEMINI_API_KEY"}
 GEMINI_OPENAI_URL = "https://generativelanguage.googleapis.com/v1beta/openai/"
 DATA_URL = "https://raw.githubusercontent.com/albertotb/curso-agentes-ia/main/data/raw"
@@ -73,3 +75,9 @@ def load_bank_db() -> sqlite3.Connection:
     db = sqlite3.connect(data_path("bank.db"), check_same_thread=False)
     db.row_factory = sqlite3.Row
     return db
+
+
+def load_crr_articles() -> list[dict]:
+    """The CRR, one dict per article (see data/README.md for the fields)."""
+    with open(data_path("crr_articles.jsonl"), encoding="utf-8") as f:
+        return [json.loads(line) for line in f]
