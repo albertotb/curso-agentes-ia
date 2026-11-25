@@ -608,18 +608,37 @@ A standard way to plug tools into agents
 
 ---
 
+## What is MCP (Model Context Protocol)?
+
+- **Who:** created by Anthropic (2024), now an open standard under the Linux Foundation, supported by OpenAI, Google and Microsoft.
+- **What a server can offer:** tools (actions), data to read (documents, records) and ready-made prompts.
+- **Already available:** servers for Google Drive, Slack, GitHub, databases, and many SaaS products.
+
+. . .
+
+- **For a bank:** one governed MCP server per internal system, with its own access control and logs, instead of each team wiring its own tools.
+- **Risk:** a server's tool descriptions go straight to the model (*Tools you did not write*). Only connect servers you trust.
+
+---
+
 ## The problem MCP solves
 
+The same tools are needed **in many apps**: the branch chatbot, the analyst's agent and Copilot all want "get a customer's loans".
+
 :::: {.columns}
-::: {.column width="50%"}
+::: {.column width="47%"}
 **Without a standard**
 
-Every AI app needs its own connector to every system: 3 apps × 3 systems = **9 integrations**, each built and secured by a different team.
+- Each app builds its own connector to each system.
+- 3 apps × 3 systems = **9 connectors** to build and secure.
 :::
-::: {.column width="50%"}
-**With MCP** (*Model Context Protocol*)
+::: {.column width="6%"}
+:::
+::: {.column width="47%"}
+**With MCP**
 
-Each system publishes its tools **once**, as an *MCP server*. Every app that speaks MCP can use them: 3 + 3 = 6.
+- Each system publishes its tools **once**, as an *MCP server*.
+- Any MCP app can use them: **3 servers** to control.
 :::
 ::::
 
@@ -642,8 +661,6 @@ MCP server: **ticketing / email**
 :::
 :::
 :::
-
-Often called "USB-C for AI": one plug, many devices.
 
 ---
 
@@ -726,19 +743,6 @@ Real messages from the server above (trimmed). Name, description and schema: exa
 . . .
 
 MCP does not replace APIs: an MCP server usually **wraps** an existing one (the GitHub MCP server calls GitHub's API). It is an API **designed for AI apps**.
-
----
-
-## MCP in practice
-
-- **Who:** created by Anthropic (2024), now an open standard under the Linux Foundation, supported by OpenAI, Google and Microsoft.
-- **What a server can offer:** tools (actions), data to read (documents, records) and ready-made prompts.
-- **Already available:** servers for Google Drive, Slack, GitHub, databases, and many SaaS products.
-
-. . .
-
-- **For a bank:** one governed MCP server per internal system, with its own access control and logs, instead of each team wiring its own tools.
-- **Risk:** a server's tool descriptions go straight to the model (*Tools you did not write*). Only connect servers you trust.
 
 ---
 
