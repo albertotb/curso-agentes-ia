@@ -608,11 +608,24 @@ A standard way to plug tools into agents
 
 ---
 
-## Model Context Protocol (MCP) {.smaller}
+## The problem MCP solves
+
+:::: {.columns}
+::: {.column width="50%"}
+**Without a standard**
+
+Every AI app needs its own connector to every system: 3 apps × 3 systems = **9 integrations**, each built and secured by a different team.
+:::
+::: {.column width="50%"}
+**With MCP** (*Model Context Protocol*)
+
+Each system publishes its tools **once**, as an *MCP server*. Every app that speaks MCP can use them: 3 + 3 = 6.
+:::
+::::
 
 ::: {.model-flow}
 ::: {.model-box}
-**Agent / app**<br>ChatGPT, Claude, Copilot,<br>your LangChain agent…
+**Any AI app**<br>ChatGPT, Claude, Copilot,<br>your LangChain agent…
 :::
 ::: {.model-arrow}
 ⟷ MCP ⟷
@@ -630,13 +643,41 @@ MCP server: **ticketing / email**
 :::
 :::
 
-- An open protocol to expose **tools, data and prompts** to any AI application: write the integration once, use it from every agent. Often called "USB-C for AI tools".
-- Launched by Anthropic (late 2024), now an industry standard governed by the Agentic AI Foundation (Linux Foundation); supported by OpenAI, Google, Microsoft and the main frameworks.
+Often called "USB-C for AI": one plug, many devices.
+
+---
+
+## How MCP works {.large-fig}
+
+```{mermaid}
+%%| fig-width: 12
+sequenceDiagram
+    participant M as LLM
+    participant A as AI app (MCP client)
+    participant S as MCP server: core banking
+    A->>S: which tools do you offer?
+    S-->>A: get_customer_loans: description + schema
+    A->>M: question + tool list
+    M-->>A: call get_customer_loans("C-0013")
+    A->>S: run get_customer_loans("C-0013")
+    S-->>A: result
+    A->>M: result
+```
+
+MCP standardises how an app **discovers** a system's tools and how it **calls** them. The rest is the loop you already know.
+
+---
+
+## MCP in practice
+
+- **Who:** created by Anthropic (2024), now an open standard under the Linux Foundation, supported by OpenAI, Google and Microsoft.
+- **What a server can offer:** tools (actions), data to read (documents, records) and ready-made prompts.
+- **Already available:** servers for Google Drive, Slack, GitHub, databases, and many SaaS products.
 
 . . .
 
-- For a bank: one governed MCP server per internal system, with its own access control and logs, instead of each team wiring tools ad hoc.
-- Same risks as any third-party tool: only connect servers you trust.
+- **For a bank:** one governed MCP server per internal system, with its own access control and logs, instead of each team wiring its own tools.
+- **Risk:** a server's tool descriptions go straight to the model (*Tools you did not write*). Only connect servers you trust.
 
 ---
 
