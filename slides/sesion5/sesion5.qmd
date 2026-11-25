@@ -142,7 +142,7 @@ The model **never runs anything**: it returns a structured request. **Your code*
 . . .
 
 - Name + description + schema: **all** the model knows about the tool.
-- Sent with **every** request: the API keeps no memory.
+- Sent with **every** request: the model keeps no memory.
 :::
 ::::
 
@@ -190,6 +190,40 @@ Your code appends the call and the tool result, and sends **everything** again.
 ::: {.notes}
 `tool_calls` is OpenAI's format; most providers also offer an OpenAI-compatible API, besides their own. `arguments` is generated text: it can be invalid JSON unless strict mode is on.
 :::
+
+---
+
+## Every step sends everything again
+
+:::: {.columns}
+::: {.column width="55%"}
+```text
+<|system|>
+You are an assistant for Demo Bank...
+You can call these tools: ...
+<|user|>
+What was our CET1 ratio in September?
+<|assistant|>
+<tool_call>{"name": "get_capital_ratios", ...}</tool_call>
+<|tool|>
+{"cet1_ratio_pct": 11.59, ...}
+<|assistant|>
+Our CET1 ratio was 11.59% at 30 Sep 2026.
+<|user|>
+And in June?
+<|assistant|>
+```
+
+In the API these are the `messages`, with roles `system`, `user`, `assistant`, `tool`: OpenAI's Chat Completions format, which most providers also accept.
+:::
+::: {.column width="4%"}
+:::
+::: {.column width="41%"}
+- Each tool call, tool result and new question is **appended**.
+- The model keeps no memory: "memory" is your code **re-sending** the history.
+- Longer conversations cost more per call, and eventually fill the **context window**.
+:::
+::::
 
 ---
 
