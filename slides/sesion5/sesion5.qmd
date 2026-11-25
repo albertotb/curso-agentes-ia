@@ -250,7 +250,7 @@ No `tool_calls`: the loop ends, and your code shows the answer.
 
 ---
 
-## The agent loop
+## The agent loop (inside each turn)
 
 ```python
 messages = [system_prompt, user_question]
@@ -270,8 +270,24 @@ for step in range(MAX_STEPS):                        # safety net 1: bounded loo
 . . .
 
 - That loop **is** the agent: *reason → act → observe*, repeated (the **ReAct** pattern).
-- The model may call several tools in one step, or the same tool several times.
-- Put **arithmetic in tools**: LLMs are bad at it, Python is not.
+- Several tools per step, or the same tool several times. **Arithmetic goes in tools**.
+- Around it, the **conversation** loop: each user message runs it again.
+
+---
+
+## When tool calls go wrong
+
+| Failure | Example | Defence |
+|---|---|---|
+| Invalid JSON | a missing quote in `arguments` | **strict mode**: generation constrained to the schema |
+| Valid JSON, wrong value | `"High"` instead of `"high"`; an invented customer ID; the wrong date | types and `enum` in the schema; validate in the tool; errors that say how to fix it |
+| Wrong tool, or none | answers from memory instead of looking it up | clear descriptions: when to use it, and when not; few tools |
+| The tool itself fails | the database times out | return the error **as text**: the model can retry or say so |
+| Does not stop | repeats the same call | `MAX_STEPS`, call limits |
+
+. . .
+
+"Good at tool calling" = right tool, right arguments, recovering from errors, knowing when to stop. Benchmarks: BFCL, τ-bench.
 
 . . .
 
