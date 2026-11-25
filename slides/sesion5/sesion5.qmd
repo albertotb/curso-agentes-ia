@@ -65,7 +65,7 @@ and add your API key as a Colab secret (key icon on the left).
 
 From the previous sessions you know that an LLM:
 
-- predicts the next token from its training data and the **context** you give it;
+- predicts the next token from its training and the **context** you give it;
 - can **hallucinate**: a fluent answer is not a correct answer;
 - knows nothing about **your** bank, and cannot look anything up or act.
 
@@ -91,11 +91,7 @@ And that an **agent** is an LLM that uses **tools in a loop** to achieve a goal:
 :::
 :::
 
-The loop, plus the code around it that runs the tools, asks for approval, keeps memory and logs, is called the **harness**.
-
-. . .
-
-**Today:** how that actually works, in code.
+The loop, plus the code around it that runs the tools, asks for approval, keeps memory and logs, is called the **harness**. **Today:** how it works, in code.
 
 ---
 
@@ -160,9 +156,9 @@ One such agent handles **over 10%** of BNY's payment repairs worldwide. Others f
 :::
 :::
 
-- **End to end:** the task was not published. The intended use is a goal, not a click: *"book me a flight to Lisbon for under €500"*. The agent searches, chooses and pays on its own, within those limits.
-- The agent pays with a **token** tied to it and to the customer's limits, never the card number (Mastercard Agent Pay).
-- A pilot, not yet a product; amount and merchant were not published.
+- **End to end:** a goal, not a click: *"book me a flight to Lisbon under €500"*; the agent searches, chooses and pays.
+- It pays with a **token** tied to the customer's limits, never the card number.
+- A pilot: the task, amount and merchant were not published.
 
 . . .
 
@@ -178,6 +174,7 @@ The model asks, your code acts
 
 ## The model asks, your code acts {.large-fig}
 
+::: {style="width: 85%; margin: 0 auto;"}
 ```{mermaid}
 %%| fig-width: 12
 sequenceDiagram
@@ -194,8 +191,9 @@ sequenceDiagram
     M-->>C: "Our CET1 ratio was 11.59% at 30 Sep 2026."
     C->>U: answer
 ```
+:::
 
-The model **never runs anything**: it returns a structured request. **Your code** decides whether to run it.
+The model **never runs anything**: it asks, and **your code** decides whether to run it.
 
 ---
 
@@ -205,7 +203,6 @@ OpenAI's **Chat Completions** format, which most providers also accept:
 
 ```js
 {
-  "model": "gpt-5.4-mini",
   "messages": [
     {"role": "system", "content": "You are an assistant for Demo Bank..."},
     {"role": "user", "content": "What was our CET1 ratio in September?"}
@@ -225,8 +222,7 @@ OpenAI's **Chat Completions** format, which most providers also accept:
 
 . . .
 
-- **Roles** say who speaks: `system`, `user`, `assistant`, `tool`. **Tools** are a list, sent with **every** request.
-- Name + description + schema: **all** the model knows about each tool.
+- **Roles**: who speaks. **Tools**: a list, sent with **every** request; name + description + schema is **all** the model knows.
 
 ---
 
@@ -375,8 +371,7 @@ No `tool_calls`: the loop ends, and your code shows the answer.
 // assistant: text, end of the loop
 "I renamed the slide heading from `## Takeaways` to `## Key takeaways`..."
 ```
-- 3 model calls, 2 tool calls, 6 seconds, $0.12 (ids and full paths trimmed).
-- Anthropic's format: `tool_use` / `tool_result` instead of `tool_calls` / `tool`; general-purpose tools (`Grep`, `Edit`, `Bash`…).
+- 3 model calls, 2 tool calls, 6 s, $0.12. Anthropic's format: `tool_use` / `tool_result`.
 
 ---
 
@@ -418,7 +413,7 @@ for step in range(MAX_STEPS):                        # safety net 1: bounded loo
 
 . . .
 
-"Good at tool calling" = right tool, right arguments, recovering from errors, knowing when to stop. Benchmarks: BFCL, τ-bench.
+"Good at tool calling" = right tool, right arguments, recovering, stopping. Benchmarks: BFCL, τ-bench.
 
 . . .
 
@@ -550,7 +545,7 @@ The model cannot reliably tell **instructions** from **data**. Any text it reads
 
 . . .
 
-The danger comes from combining three things in one agent (the [*lethal trifecta*](https://simonwillison.net/2025/Jun/16/the-lethal-trifecta/), Simon Willison):
+The danger, the [*lethal trifecta*](https://simonwillison.net/2025/Jun/16/the-lethal-trifecta/) (Simon Willison):
 
 ::: {.model-flow}
 ::: {.model-box}
@@ -572,7 +567,7 @@ a way to<br>**send data out**
 
 . . .
 
-There is no prompt that fixes this reliably. The defences are **architectural**: least privilege, no external actions on untrusted input, human approval, logging.
+No prompt fixes this reliably. The defences are **architectural**: least privilege, human approval, logging.
 
 ---
 
@@ -612,33 +607,31 @@ A standard way to plug tools into agents
 
 - **Who:** created by Anthropic (2024), now an open standard under the Linux Foundation, supported by OpenAI, Google and Microsoft.
 - **What a server can offer:** tools (actions), data to read (documents, records) and ready-made prompts.
-- **Already available:** servers for Google Drive, Slack, GitHub, databases, and many SaaS products.
+- **Already available:** Google Drive, Slack, GitHub, databases, many SaaS products.
 
 . . .
 
-- **For a bank:** one governed MCP server per internal system, with its own access control and logs, instead of each team wiring its own tools.
+- **For a bank:** one governed server per internal system, with its own access control and logs.
 - **Risk:** a server's tool descriptions go straight to the model (*Tools you did not write*). Only connect servers you trust.
 
 ---
 
 ## The problem MCP solves
 
-The same tools are needed **in many apps**: the branch chatbot, the analyst's agent and Copilot all want "get a customer's loans".
+The same tools are needed **in many apps**: branch chatbot, analyst's agent, Copilot…
 
 :::: {.columns}
 ::: {.column width="47%"}
 **Without a standard**
 
-- Each app builds its own connector to each system.
-- 3 apps × 3 systems = **9 connectors** to build and secure.
+Each app connects to each system: 3 apps × 3 systems = **9 connectors** to build and secure.
 :::
 ::: {.column width="6%"}
 :::
 ::: {.column width="47%"}
 **With MCP**
 
-- Each system publishes its tools **once**, as an *MCP server*.
-- Any MCP app can use them: **3 servers** to control.
+Each system publishes its tools **once**, as an *MCP server*, for any MCP app: **3 servers**.
 :::
 ::::
 
@@ -666,6 +659,7 @@ MCP server: **ticketing / email**
 
 ## How MCP works {.large-fig}
 
+::: {style="width: 66%; margin: 0 auto;"}
 ```{mermaid}
 %%| fig-width: 12
 sequenceDiagram
@@ -681,6 +675,7 @@ sequenceDiagram
     S-->>A: result
     A->>M: result
 ```
+:::
 
 MCP standardises how an app **discovers** and **calls** a system's tools. The tool runs **in the server**; the model never speaks MCP, the **harness** does.
 
@@ -774,11 +769,11 @@ The loop from notebook 01 is ~30 lines. A real assistant also needs:
 
 . . .
 
-**LangChain** (`create_agent`) gives you the loop and those pieces through *middleware*. **LangGraph**, underneath, lets you draw the process as a graph.
+**LangChain** (`create_agent`) gives you the loop and those pieces; **LangGraph**, underneath, draws the process as a graph.
 
 . . .
 
-A framework **does not make the agent smarter**: it handles the plumbing. Quality still comes from tools, data and prompts.
+A framework **does not make the agent smarter**: quality still comes from tools, data and prompts.
 
 ---
 
@@ -879,14 +874,12 @@ This is the quarterly capital check you will build in notebook 02.
 - An agent is an **LLM + tools + a loop**. The model decides *what* to call; **your code decides whether and how** it runs.
 - Tool design matters more than prompts: **narrow, typed, aggregated, with useful errors**.
 - **Reading ≠ acting**: actions need human approval and logs.
-- Anything the agent reads can try to steer it: limit what it can access and do.
+- Anything the agent reads can steer it: limit what it can access and do.
 - Frameworks handle the plumbing; for regulated processes, prefer **workflows** with the LLM only where needed.
 
 . . .
 
-**Tomorrow:** give the agent a tool that searches the **CRR** — retrieval-augmented generation (RAG).
-
----
+**Tomorrow:** a tool that searches the **CRR**: retrieval-augmented generation (RAG).
 
 ---
 
@@ -970,7 +963,7 @@ flagged                                                  # only this goes back t
 
 ## Multi-agent systems
 
-**Why?** One agent with 50 tools and a long prompt gets confused. Split the work:
+**Why?** One agent with 50 tools gets confused. Split the work:
 
 - each agent has **one job**, its own instructions, tools and permissions;
 - when something fails, you know **which step** failed, and fix only that.
@@ -979,9 +972,9 @@ flagged                                                  # only this goes back t
 
 | Pattern | Who picks the agent | Example |
 |---|---|---|
-| Router | your **code**: rules or a classifier | classify the request → credit agent or AML agent |
-| Supervisor | an **LLM**: other agents are its tools | `ask_aml_agent(question)` |
-| Hand-off | the **active agent** passes the conversation on | `transfer_to_aml_agent()` |
+| Router | your **code**: rules or a classifier | request → credit or AML agent |
+| Supervisor | an **LLM**, agents as tools | `ask_aml_agent(question)` |
+| Hand-off | the **active agent** passes it on | `transfer_to_aml_agent()` |
 
 Start with **one** agent: each extra agent adds cost, failure points and audit work.
 
@@ -1021,13 +1014,13 @@ FAQ assistant
 
 The router can be:
 
-- **Rules**: the form field, the channel, a keyword ("card blocked" → card agent).
-- **A classifier**: a classic machine-learning model trained on past requests.
+- **Rules**: a form field, the channel, a keyword.
+- **A classifier**: a machine-learning model trained on past requests.
 - **One LLM call** that only returns a category, from a fixed list.
 
 . . .
 
-Cheap, predictable and easy to audit: it is a **workflow** with agents inside. It struggles with requests that mix two topics.
+Cheap, predictable, auditable: a **workflow** with agents inside. Weak when a request mixes two topics.
 
 ---
 
@@ -1052,9 +1045,9 @@ User
 :::
 
 - For the supervisor, `ask_aml_agent(question)` is **one more tool**; it does not know there is an agent behind it.
-- The AML agent may read 200 transactions in ten steps; the supervisor only receives a **short answer**. Its context stays clean.
-- Sub-agents can run **in parallel**, or be created **on demand** for one task (Claude Code does this).
-- Unlike an LLM router, which picks **one** agent and steps aside, the supervisor stays in charge: *"Is C-0046 a credit risk **and** an AML concern?"* asks both agents and writes one answer.
+- The AML agent may read 200 transactions; the supervisor only gets a **short answer**.
+- Sub-agents can run **in parallel**, or be created **on demand** for one task.
+- Unlike an LLM router, it stays in charge: *"Is C-0046 a credit risk **and** an AML concern?"* asks both agents, writes one answer.
 
 ---
 
