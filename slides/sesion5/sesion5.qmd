@@ -95,77 +95,56 @@ The model **never runs anything**: it returns a structured request. **Your code*
 
 ---
 
-## What the model sees, what it returns
+## 1 · Your code → API: the request
 
-:::: {.columns}
-::: {.column width="50%"}
-**We send** a list of tools, each one like this:
+OpenAI's **Chat Completions** format, which most providers also accept:
 
-```json
+```js
 {
-  "type": "function",
-  "function": {
-    "name": "get_capital_ratios",
-    "description":
-      "Quarter-end ratios. Do not recompute.",
-    "parameters": {
-      "type": "object",
-      "properties": {
-        "reference_date": {
-          "type": "string",
-          "description": "YYYY-MM-DD"
-        }
-      },
-      "required": ["reference_date"]
-    }
-  }
-}
-```
-:::
-::: {.column width="50%"}
-**It answers** with a tool call:
-
-```json
-{
-  "tool_calls": [{
-    "id": "call_YZ2Y...",
-    "type": "function",
-    "function": {
-      "name": "get_capital_ratios",
-      "arguments":
-        "{\"reference_date\": \"2026-09-30\"}"
-    }
-  }]
+  "model": "gpt-5.4-mini",
+  "messages": [
+    {"role": "system", "content": "You are an assistant for Demo Bank..."},
+    {"role": "user", "content": "What was our CET1 ratio in September?"}
+  ],
+  "tools": [
+    {"type": "function",
+     "function": {
+       "name": "get_capital_ratios",
+       "description": "Quarter-end ratios. Do not recompute.",
+       "parameters": {"type": "object",
+                      "properties": {"reference_date": {"type": "string", "description": "YYYY-MM-DD"}},
+                      "required": ["reference_date"]}}},
+    {"type": "function", "function": {"name": "get_customer_loans", ...}}
+  ]
 }
 ```
 
 . . .
 
-- Name + description + schema: **all** the model knows about the tool.
-- Sent with **every** request: the model keeps no memory.
-:::
-::::
+- **Roles** say who speaks: `system`, `user`, `assistant`, `tool`. **Tools** are a list, sent with **every** request.
+- Name + description + schema: **all** the model knows about each tool.
 
 ---
 
-## Under the hood
+## 2 · API → model → API: it is all text
 
 :::: {.columns}
 ::: {.column width="50%"}
-**Sent:** one text prompt
+**The API renders** the request with the model's template (illustrative):
 
 ```text
 <|system|>
 You are an assistant for Demo Bank...
-You can call these tools:
+<tools>
 {"name": "get_capital_ratios", ...}
 {"name": "get_customer_loans", ...}
+</tools>
 <|user|>
 What was our CET1 ratio in September?
 <|assistant|>
 ```
 
-**Returned:** what the model writes
+**The model continues** the text:
 
 ```text
 <tool_call>
@@ -177,53 +156,79 @@ What was our CET1 ratio in September?
 ::: {.column width="4%"}
 :::
 ::: {.column width="46%"}
-1. The API **renders** it with the model's template.
-2. The model was **post-trained** to write tool calls in that format.
-3. The API **parses** them into `tool_calls`.
-
-. . .
-
-Your code appends the call and the tool result, and sends **everything** again.
+- `<|user|>`, `<|assistant|>`… mark **roles**: who speaks.
+- `<tools>`, `<tool_call>`… are **tags**: what kind of content.
+- The model was **post-trained** to write `<tool_call>` when it needs a tool.
+- Each model family has its own template; the API hides it.
 :::
 ::::
 
-::: {.notes}
-`tool_calls` is OpenAI's format; most providers also offer an OpenAI-compatible API, besides their own. `arguments` is generated text: it can be invalid JSON unless strict mode is on.
+---
+
+## 3 · API → your code: the response
+
+:::: {.columns}
+::: {.column width="50%"}
+The API **parses** the tag into `tool_calls`:
+
+```json
+{
+  "choices": [{
+    "message": {
+      "role": "assistant",
+      "content": null,
+      "tool_calls": [{
+        "id": "call_YZ2Y...",
+        "type": "function",
+        "function": {
+          "name": "get_capital_ratios",
+          "arguments":
+            "{\"reference_date\": \"2026-09-30\"}"
+        }
+      }]
+    },
+    "finish_reason": "tool_calls"
+  }]
+}
+```
 :::
+::: {.column width="4%"}
+:::
+::: {.column width="46%"}
+- `content: null`, `finish_reason: "tool_calls"`: no answer yet, it **asks** for a tool.
+- The `id` is added by the API, to match the result later.
+- `arguments` is text the model wrote: it can be invalid JSON unless **strict mode** is on.
+:::
+::::
 
 ---
 
-## Every step sends everything again
+## 4 · Your code → API: the next request
 
 :::: {.columns}
 ::: {.column width="55%"}
-```text
-<|system|>
-You are an assistant for Demo Bank...
-You can call these tools: ...
-<|user|>
-What was our CET1 ratio in September?
-<|assistant|>
-<tool_call>{"name": "get_capital_ratios", ...}</tool_call>
-<|tool|>
-{"cet1_ratio_pct": 11.59, ...}
-<|assistant|>
-Our CET1 ratio was 11.59% at 30 Sep 2026.
-<|user|>
-And in June?
-<|assistant|>
+```js
+"messages": [
+  {"role": "system", "content": "..."},
+  {"role": "user", "content": "What was our CET1..."},
+  {"role": "assistant", "tool_calls": [...]},
+  {"role": "tool", "tool_call_id": "call_YZ2Y...",
+   "content": "{\"cet1_ratio_pct\": 11.59, ...}"}
+]
 ```
-
-In the API these are the `messages`, with roles `system`, `user`, `assistant`, `tool`: OpenAI's Chat Completions format, which most providers also accept.
 :::
 ::: {.column width="4%"}
 :::
 ::: {.column width="41%"}
-- Each tool call, tool result and new question is **appended**.
-- The model keeps no memory: "memory" is your code **re-sending** the history.
-- Longer conversations cost more per call, and eventually fill the **context window**.
+Your code runs the tool, **appends** the call and its result, and sends **everything** again, tools included.
 :::
 ::::
+
+. . .
+
+- The model keeps no memory: "memory" is your code **re-sending** the history.
+- Each step is a longer prompt: it costs more, and eventually fills the **context window**.
+- The model now answers with text: *"Our CET1 ratio was 11.59% at 30 Sep 2026."*
 
 ---
 
