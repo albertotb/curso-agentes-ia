@@ -58,6 +58,8 @@ And that an **agent** adds three things around the model:
 :::
 :::
 
+The loop, plus the code around it that runs the tools, asks for approval, keeps memory and logs, is called the **harness**.
+
 . . .
 
 **Today:** how that actually works, in code.
