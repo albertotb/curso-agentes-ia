@@ -252,34 +252,27 @@ No `tool_calls`: the loop ends, and your code shows the answer.
 
 ## A real trace from Claude Code
 
-:::: {.columns}
-::: {.column width="62%"}
 ```js
-// assistant message, stop_reason: "tool_use"
-{"type": "tool_use",
- "id": "toolu_01Nr4wR5PbJV2Y1vhSZ9Ewx5",
- "name": "Bash",
- "input": {
-   "command": "grep -n '^## When tool calls go wrong' sesion5.qmd",
-   "description": "Locate insertion point after errors slide"},
- "caller": {"type": "direct"}}
+// user
+"In sesion5_rag.qmd, rename the 'Takeaways' slide to 'Key takeaways'."
 
-// next user message: added by the harness
-{"type": "tool_result",
- "tool_use_id": "toolu_01Nr4wR5PbJV2Y1vhSZ9Ewx5",
- "content": "278:## When tool calls go wrong",
- "is_error": false}
+// assistant: tool_use
+{"name": "Grep", "input": {"pattern": "Takeaways", "path": "sesion5_rag.qmd"}}
+// harness: tool_result
+"310:## Takeaways"
+
+// assistant: tool_use
+{"name": "Edit", "input": {"file_path": "sesion5_rag.qmd",
+                           "old_string": "## Takeaways",
+                           "new_string": "## Key takeaways"}}
+// harness: tool_result
+"The file sesion5_rag.qmd has been updated successfully."
+
+// assistant: text, end of the loop
+"I renamed the slide heading from `## Takeaways` to `## Key takeaways`..."
 ```
-*Trimmed from the session log.*
-:::
-::: {.column width="3%"}
-:::
-::: {.column width="35%"}
-- Same four steps, Anthropic's own format: `tool_use` / `tool_result` instead of `tool_calls` / `tool`.
-- General-purpose tools: `Bash`, `Read`, `Edit`, `WebSearch`…
-- Preparing this course took **715** tool calls.
-:::
-::::
+- 3 model calls, 2 tool calls, 6 seconds, $0.12 (ids and full paths trimmed).
+- Anthropic's format: `tool_use` / `tool_result` instead of `tool_calls` / `tool`; general-purpose tools (`Grep`, `Edit`, `Bash`…).
 
 ---
 
