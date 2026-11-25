@@ -913,7 +913,7 @@ flagged                                                  # only this goes back t
 
 | Pattern | Who picks the agent | Example |
 |---|---|---|
-| Router | your **code** | classify the request → credit agent or AML agent |
+| Router | your **code**: rules or a classifier | classify the request → credit agent or AML agent |
 | Supervisor | an **LLM**: other agents are its tools | `ask_aml_agent(question)` |
 | Hand-off | the **active agent** passes the conversation on | `transfer_to_aml_agent()` |
 
@@ -922,3 +922,103 @@ Start with **one** agent: each extra agent adds cost, failure points and audit w
 ::: {.notes}
 Between companies, the open standard is A2A (Agent2Agent, Linux Foundation, v1.0 in 2026): MCP connects an agent to tools, A2A connects agents to each other.
 :::
+
+---
+
+## Router: code picks the agent
+
+::: {.model-flow}
+::: {.model-box}
+Request
+:::
+::: {.model-arrow}
+→
+:::
+::: {.model-box}
+**Router**<br>(code, no agent)
+:::
+::: {.model-arrow}
+→
+:::
+::: {.model-stack}
+::: {.model-box}
+credit agent
+:::
+::: {.model-box}
+AML agent
+:::
+::: {.model-box}
+FAQ assistant
+:::
+:::
+:::
+
+The router can be:
+
+- **Rules**: the form field, the channel, a keyword ("card blocked" → card agent).
+- **A classifier**: a classic machine-learning model trained on past requests.
+- **One LLM call** that only returns a category, from a fixed list.
+
+. . .
+
+Cheap, predictable and easy to audit: it is a **workflow** with agents inside. It struggles with requests that mix two topics.
+
+---
+
+## Supervisor: agents as tools
+
+::: {.model-flow}
+::: {.model-box}
+User
+:::
+::: {.model-arrow}
+⇄
+:::
+::: {.model-box}
+**Supervisor agent**<br>tools: `get_capital_ratios`,<br>`ask_aml_agent`, `ask_credit_agent`
+:::
+::: {.model-arrow}
+⇄
+:::
+::: {.model-box}
+**AML agent**<br>its own prompt, tools,<br>loop and context
+:::
+:::
+
+- For the supervisor, `ask_aml_agent(question)` is **one more tool**: name, description, schema. It does not know there is an agent behind it.
+- The AML agent may read 200 transactions in ten steps; the supervisor only receives a **short answer**. Its context stays clean.
+- Sub-agents can run **in parallel**, and can be created **on demand** for one task (Claude Code does this).
+- The user only ever talks to the supervisor.
+
+---
+
+## Hand-off: passing the conversation on
+
+::: {.model-flow}
+::: {.model-box}
+User
+:::
+::: {.model-arrow}
+⇄
+:::
+::: {.model-box}
+**Front-desk agent**<br>calls `transfer_to_aml_agent()`
+:::
+::: {.model-arrow}
+→
+:::
+::: {.model-box}
+User
+:::
+::: {.model-arrow}
+⇄
+:::
+::: {.model-box}
+**AML agent**<br>receives the conversation<br>and takes over
+:::
+:::
+
+- Like transferring a call in a call centre: the second agent now **talks to the user directly**, with the history so far.
+- Agents do not create each other: all of them are **defined in advance**. What moves is the conversation.
+- The hand-off itself is a tool call, so it is in the trace: who handed over to whom, and why.
+- Offered by the OpenAI Agents SDK (*handoffs*) and LangGraph (*swarm*).
