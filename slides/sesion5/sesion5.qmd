@@ -66,6 +66,34 @@ The loop, plus the code around it that runs the tools, asks for approval, keeps 
 
 ---
 
+## Agents in banks today
+
+Not chat assistants: agents that **act** inside the bank.
+
+| Bank | What the agents do |
+|---|---|
+| **BNY** | ~130 "digital employees": own login, email and Teams, and a human manager |
+| **Citi** | Arc, an internal platform to build agents (2026); the Devin coding agent for 14,000 engineers |
+| **Goldman Sachs** | Agents built with Anthropic for trade accounting and client onboarding |
+| **JPMorgan** | LLM Suite for 200,000+ employees; agents for software testing and research |
+
+*Figures as reported by the banks.*
+
+---
+
+## Agents that pay
+
+- **March 2026:** Santander and Mastercard complete Europe's first end-to-end payment executed by an AI agent, in a regulated bank.
+- **Santander and Visa:** agent-initiated payments in Latin America, within limits the customer consented to.
+- **Mastercard Agent Pay:** the agent gets a token, never the card (pilots with DBS and UOB in Singapore).
+- **American Express:** only verified agents can transact; customers are protected against agent errors.
+
+. . .
+
+Everyone asks for the same things: **consent, authentication, limits, traceability**. That is Block 3.
+
+---
+
 ## Block 1 · Tool calling {.section-divider}
 
 The model asks, your code acts
