@@ -664,7 +664,7 @@ sequenceDiagram
     A->>M: result
 ```
 
-MCP standardises how an app **discovers** a system's tools and how it **calls** them. The rest is the loop you already know.
+MCP standardises how an app **discovers** a system's tools and how it **calls** them. The model never speaks MCP: the **harness** does, and translates to the tool calls you already know.
 
 ---
 
