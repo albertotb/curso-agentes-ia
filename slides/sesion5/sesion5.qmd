@@ -449,6 +449,40 @@ A generic `run_sql` "works"… until the model filters `'High'` instead of `'hig
 
 ---
 
+## A good tool, in code
+
+```python
+@tool(parse_docstring=True)
+def get_capital_ratios(reference_date: str) -> dict:
+    """Get Demo Bank's capital and liquidity ratios at a quarter end.
+
+    Use it for any question about the bank's own capital or
+    liquidity. Ratios are already computed: do not recompute them.
+
+    Args:
+        reference_date: Quarter end, YYYY-MM-DD, e.g. 2026-09-30.
+    """
+    row = ...  # one row from the bank's database
+    if row is None:
+        return {"error": f"No data for {reference_date}. "
+                         f"Available: {available}"}
+    return {"cet1_ratio_pct": ..., "lcr_pct": ...}
+```
+
+:::: {.columns}
+::: {.column width="50%"}
+- **Name**: what it returns.
+- **Docstring**: what, when, what *not* to do.
+- **Typed argument**, with an example.
+:::
+::: {.column width="50%"}
+- **Error** that says how to fix it.
+- **Output**: few numbers, computed in Python.
+:::
+::::
+
+---
+
 ## Reading is not acting {.smaller}
 
 :::: {.columns}
@@ -482,6 +516,23 @@ Worst case: a wrong action, with consequences.
 . . .
 
 **→ Notebook 01, sections 5–6**
+
+---
+
+## Tools for a bank
+
+| Tool | Kind | Control |
+|---|---|---|
+| `search_regulation(query)` | read | anyone |
+| `get_customer_loans(customer_id)` | read | only customers the user may see |
+| `get_kyc_status(customer_id)` | read | compliance roles |
+| `calculate_lcr(date, stress_scenario)` | compute | anyone; deterministic code, no LLM arithmetic |
+| `open_aml_case(customer_id, reason)` | act | always a human approves |
+| `request_limit_review(customer_id, new_limit_eur)` | act | a human approves above €10,000 |
+
+. . .
+
+Few, specific tools, each with its own permissions and controls. Not one `run_sql` that can do everything.
 
 ---
 
