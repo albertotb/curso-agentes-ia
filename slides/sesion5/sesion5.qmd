@@ -550,7 +550,7 @@ The model cannot reliably tell **instructions** from **data**. Any text it reads
 
 . . .
 
-The danger comes from combining three things in one agent (the *lethal trifecta*):
+The danger comes from combining three things in one agent (the [*lethal trifecta*](https://simonwillison.net/2025/Jun/16/the-lethal-trifecta/), Simon Willison):
 
 ::: {.model-flow}
 ::: {.model-box}
