@@ -9,6 +9,39 @@ format:
     output-file: sesion5.html
 ---
 
+## About me
+
+**Alberto Torres Barrán**, CTO and co-founder of [Komorebi AI](https://komorebi.ai)
+
+::: {.model-flow}
+::: {.model-box}
+**2010 · IIC**<br>machine learning<br>for wind power
+:::
+::: {.model-arrow}
+→
+:::
+::: {.model-box}
+**2013 · UAM**<br>PhD in optimisation<br>and deep learning
+:::
+::: {.model-arrow}
+→
+:::
+::: {.model-box}
+**2017 · ICMAT-CSIC**<br>postdoc: energy, health,<br>cybersecurity
+:::
+::: {.model-arrow}
+→
+:::
+::: {.model-box}
+**2019 · Komorebi AI**<br>AI solutions<br>for companies
+:::
+:::
+
+- Teaching: IE University (Machine Learning for Business), Master in Big Data and Data Science (UAM).
+- At Komorebi we build agents in production, e.g. an assistant for public tenders: it analyses the documents, simulates the price and drafts the proposal, with a person reviewing each step.
+
+---
+
 ## Today and tomorrow
 
 | | Thursday | Friday |
