@@ -66,11 +66,11 @@ Question
 
 ## Three ways to answer from documents
 
-| | How | Per question | Breaks when |
-|---|---|---|---|
-| **1. Everything in the prompt** | paste all the documents into the context | ~370,000 tokens (the whole CRR) | the corpus is large, or changes |
-| **2. An agent that reads** | give it the index and tools to search and open documents | a few thousand tokens, many steps | the question uses different words than the text |
-| **3. RAG** | retrieve the 5 most relevant excerpts by **meaning** | ~2,500 tokens, one step | the excerpts miss part of the answer |
+| | How | Per question | Time | Breaks when |
+|---|---|---|---|---|
+| **1. Everything in the prompt** | paste all the documents | ~370,000 tokens | slow: reads everything, every time | the corpus is large, or changes |
+| **2. An agent that reads** | index + tools to search and open | a few thousand tokens | **slowest**: 5–15 steps of ~1.5&nbsp;s each | the question uses other words than the text |
+| **3. RAG** | the 5 most relevant excerpts by **meaning** | ~2,500 tokens | **fast**: one search + one answer, ~2–3&nbsp;s | the excerpts miss part of the answer |
 
 . . .
 
