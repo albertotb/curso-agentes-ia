@@ -681,21 +681,6 @@ MCP standardises how an app **discovers** a system's tools and how it **calls** 
 
 ---
 
-## Multi-agent systems
-
-| Pattern | Who picks the agent | Example |
-|---|---|---|
-| Router | your **code** | classify the request → credit agent or AML agent |
-| Supervisor | an **LLM**: other agents are its tools | `ask_aml_agent(question)` |
-| Hand-off | the **active agent** passes the conversation on | `transfer_to_aml_agent()` |
-
-. . .
-
-- **MCP** connects an agent to tools; **A2A** (Agent2Agent, v1.0, Linux Foundation) connects agents to each other, also across companies.
-- Start with **one** agent: each extra agent adds tokens, failure points and audit work.
-
----
-
 ## Block 5 · Frameworks {.section-divider}
 
 What they automate, and what they do not
@@ -837,26 +822,103 @@ This is the quarterly capital check you will build in notebook 02.
 
 ---
 
-## Extra: code mode
+---
 
-:::: {.columns}
-::: {.column width="52%"}
-The agent writes **code** that calls the tools. One tool, `run_code`; your tools are **functions** inside it:
+## Extra {.section-divider}
+
+Code mode and multi-agent systems
+
+---
+
+## The cost of one call at a time
+
+Every tool call is a **round trip** to the model, and every round trip re-sends the whole conversation.
+
+::: {.model-flow}
+::: {.model-box}
+LLM
+:::
+::: {.model-arrow}
+→
+:::
+::: {.model-box}
+tool
+:::
+::: {.model-arrow}
+→
+:::
+::: {.model-box}
+LLM
+:::
+::: {.model-arrow}
+→
+:::
+::: {.model-box}
+tool
+:::
+::: {.model-arrow}
+→
+:::
+::: {.model-box}
+LLM
+:::
+::: {.model-arrow}
+→ … ×120
+:::
+:::
+
+*"Which customers made more than 3 cash deposits under €10,000 in the same month?"*
+
+- With one tool per customer: **120 calls**, ~1.5 s each, a longer prompt every time.
+- Every intermediate result (thousands of transactions) goes **into the context**: more cost, and more for the model to get wrong.
+- Real tasks need dozens or hundreds of calls.
+
+---
+
+## Code mode: the agent writes the loop
+
+The model gets **one tool**, `run_code`, and writes a program; your tools are **functions** inside it:
 
 ```python
-sep = get_capital_ratios("2026-09-30")
-jun = get_capital_ratios("2026-06-30")
-delta = sep["cet1_ratio_pct"] - jun["cet1_ratio_pct"]
-{"cet1_change_bp": round(delta * 100)}
+flagged = []
+for customer in list_customers():                        # 120 customers
+    deposits = get_transactions(customer["id"], kind="cash_deposit")
+    small = [d for d in deposits if d["amount_eur"] < 10_000]
+    for month, n in Counter(d["date"][:7] for d in small).items():
+        if n > 3:
+            flagged.append((customer["id"], month, n))
+flagged                                                  # only this goes back to the model
 ```
 
-A sandbox runs it; the model only sees the **final result**.
+:::: {.columns}
+::: {.column width="50%"}
+- **Gains:** one round trip instead of 120; the transactions never enter the context; loops and counting in Python.
 :::
-::: {.column width="4%"}
-:::
-::: {.column width="44%"}
-- **Gains:** one step instead of three; intermediate data stays out of the context; loops and arithmetic in Python.
-- **Costs:** a sandbox for model-written code; harder to approve and debug.
-- **Where:** Pydantic AI (`CodeMode`), Claude API (programmatic tool calling), smolagents (`CodeAgent`).
+::: {.column width="50%"}
+- **Costs:** a sandbox to run model-written code; harder to approve and debug.
+- **Where:** Pydantic AI, Claude API, smolagents.
 :::
 ::::
+
+---
+
+## Multi-agent systems
+
+**Why?** One agent with 50 tools and a long prompt gets confused. Split the work:
+
+- each agent has **one job**, its own instructions, tools and permissions;
+- when something fails, you know **which step** failed, and fix only that.
+
+. . .
+
+| Pattern | Who picks the agent | Example |
+|---|---|---|
+| Router | your **code** | classify the request → credit agent or AML agent |
+| Supervisor | an **LLM**: other agents are its tools | `ask_aml_agent(question)` |
+| Hand-off | the **active agent** passes the conversation on | `transfer_to_aml_agent()` |
+
+Start with **one** agent: each extra agent adds cost, failure points and audit work.
+
+::: {.notes}
+Between companies, the open standard is A2A (Agent2Agent, Linux Foundation, v1.0 in 2026): MCP connects an agent to tools, A2A connects agents to each other.
+:::
