@@ -160,7 +160,7 @@ One such agent handles **over 10%** of BNY's payment repairs worldwide. Others f
 :::
 :::
 
-- **End to end:** the human sets the goal; the agent carries out the purchase *and* the payment.
+- **End to end:** the task was not published. The intended use is a goal, not a click: *"book me a flight to Lisbon for under €500"*. The agent searches, chooses and pays on its own, within those limits.
 - The agent pays with a **token** tied to it and to the customer's limits, never the card number (Mastercard Agent Pay).
 - A pilot, not yet a product; amount and merchant were not published.
 
