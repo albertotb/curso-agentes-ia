@@ -297,34 +297,29 @@ Meaning, words, or both
 
 ---
 
-## Semantic vs keyword search
+## Two ways to search
 
-:::: {.columns}
-::: {.column width="50%"}
-**Semantic** (embeddings)
+**Semantic search**: embed the question and return the chunks whose vectors are closest to it (Block 2). It matches **meaning**.
 
-*"Is there a cap on how much a bank can lend to one borrower?"*
+**Keyword search** (BM25, the classic search-engine ranking): score each chunk by how many of the question's words it contains, rare words counting more. It matches **words**: no model, just counting.
 
-→ **Art. 395** · Limits to large exposures
+---
 
-No word in common: *cap*/limits, *lend*/exposure, *borrower*/client.
-:::
-::: {.column width="50%"}
-**Keyword** (BM25)
+## Same questions, both methods
 
-*"What does Article 412 require?"*
+We search the **CRR** (the EU regulation on bank capital, 737 articles) with two questions. Top 2 results of each method, by article title:
 
-→ semantic: Art. 6, 459, 414… ✗
+: {tbl-colwidths="[14,43,43]"}
 
-→ keyword: Art. 414, **412** ✓
-
-Identifiers, codes, exact terms: `LCR`, `EBA/GL/2020/06`, `Article 412`.
-:::
-::::
+| | *"Is there a cap on how much a bank can lend to one borrower?"* | *"What does Article 412 require?"* |
+|---|---|---|
+| **Semantic** | ✓ **Limits to large exposures**<br>Cap on the own funds requirement… | ✗ General principles<br>✗ Prudential requirements |
+| **Keyword** | ✗ Requirements for receivables<br>✗ Calculation of the leverage ratio | Compliance with liquidity requirements<br>✓ **Liquidity coverage requirement** (Art. 412) |
+| **Why** | The right article shares no word with the question: *cap*/limits, *lend*/exposure | "412" is an **identifier**: a number has no meaning to embed |
 
 . . .
 
-**Hybrid search** runs both and merges the rankings (*reciprocal rank fusion*: each result scores `1 / (60 + rank)` in each list). Optionally, a **reranker** — a specialised model or the LLM itself — reorders the top 15–50 candidates.
+Each fails where the other works. **Hybrid search** runs both and merges the rankings; a **reranker** (a specialised model or the LLM) can then reorder the top candidates.
 
 ---
 
