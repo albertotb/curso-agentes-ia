@@ -677,11 +677,12 @@ sequenceDiagram
     A->>M: question + tool list
     M-->>A: call get_customer_loans("C-0013")
     A->>S: run get_customer_loans("C-0013")
+    Note over S: the tool runs here
     S-->>A: result
     A->>M: result
 ```
 
-MCP standardises how an app **discovers** a system's tools and how it **calls** them. The model never speaks MCP: the **harness** does, and translates to the tool calls you already know.
+MCP standardises how an app **discovers** and **calls** a system's tools. The tool runs **in the server**; the model never speaks MCP, the **harness** does.
 
 ---
 
