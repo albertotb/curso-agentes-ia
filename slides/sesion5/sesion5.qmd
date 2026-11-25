@@ -211,10 +211,34 @@ Your code runs the tool, **appends** the call and its result, and sends **everyt
 "messages": [
   {"role": "system", "content": "..."},
   {"role": "user", "content": "What was our CET1 ratio in September?"},
-  {"role": "assistant", "tool_calls": [...]},                                     // step 1: asks for a tool
-  {"role": "tool", "tool_call_id": "call_YZ2Y...", "content": "{...11.59...}"},   // added by your code
-  {"role": "assistant", "content": "Our CET1 ratio was 11.59% at 30 Sep 2026."},  // step 2: answers
-  {"role": "user", "content": "And in June?"}                                     // turn 2
+  {"role": "assistant", "tool_calls": [...]},                                    // the call (step 3)
+  {"role": "tool", "tool_call_id": "call_YZ2Y...", "content": "{...11.59...}"}   // added by your code
+]
+```
+
+. . .
+
+Now the model has what it needs and **answers with text**:
+
+```js
+"message": {"role": "assistant", "content": "Our CET1 ratio was 11.59% at 30 Sep 2026."},
+"finish_reason": "stop"
+```
+
+No `tool_calls`: the loop ends, and your code shows the answer.
+
+---
+
+## 5. The next turn: the conversation grows
+
+```js
+"messages": [
+  {"role": "system", "content": "..."},
+  {"role": "user", "content": "What was our CET1 ratio in September?"},
+  {"role": "assistant", "tool_calls": [...]},
+  {"role": "tool", "tool_call_id": "call_YZ2Y...", "content": "{...11.59...}"},
+  {"role": "assistant", "content": "Our CET1 ratio was 11.59% at 30 Sep 2026."},
+  {"role": "user", "content": "And in June?"}                                     // new question
 ]
 ```
 
