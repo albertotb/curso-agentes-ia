@@ -269,8 +269,9 @@ for step in range(MAX_STEPS):                        # safety net 1: bounded loo
 
 . . .
 
-- That loop **is** the agent: *reason → act → observe*, repeated (the **ReAct** pattern).
-- Several tools per step, or the same tool several times. **Arithmetic goes in tools**.
+- That loop **is** the agent: *reason → act → observe* (the **ReAct** pattern).
+- Tools are its **only** way to touch the world: data, files, systems.
+- Several tools per step, or the same one again; **arithmetic in tools**.
 - Around it, the **conversation** loop: each user message runs it again.
 
 ---
