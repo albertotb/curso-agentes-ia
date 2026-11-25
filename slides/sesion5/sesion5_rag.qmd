@@ -64,6 +64,63 @@ Question
 
 ---
 
+## Three ways to answer from documents
+
+| | How | Per question | Breaks when |
+|---|---|---|---|
+| **1. Everything in the prompt** | paste all the documents into the context | ~370,000 tokens (the whole CRR) | the corpus is large, or changes |
+| **2. An agent that reads** | give it the index and tools to search and open documents | a few thousand tokens, many steps | the question uses different words than the text |
+| **3. RAG** | retrieve the 5 most relevant excerpts by **meaning** | ~2,500 tokens, one step | the excerpts miss part of the answer |
+
+. . .
+
+All three are used in practice, and they combine: our agent in notebook 03 has both a **search** tool (3) and a **read article** tool (2).
+
+---
+
+## Option 1: everything in the prompt
+
+Some models accept a million tokens: the whole CRR fits. Why not just paste it?
+
+- **Cost and time**: ~370,000 tokens re-sent with **every** question, ~150 times more than RAG. Caching the prompt helps, but only if nothing changes.
+- **Quality drops** with very long inputs: details in the middle of a long text are easily missed.
+- **No sources**: the model may still answer from memory, and you cannot tell which article it used.
+
+. . .
+
+It is the right choice for **one** document of a few dozen pages: a contract, an inspection report, a prospectus.
+
+---
+
+## Option 2: an agent that reads
+
+Tools: `list_articles()` (the 737 titles, ~8,600 tokens), `grep(pattern)`, `read_article(n)`. It searches like a person, and it is how coding agents work.
+
+*"Is there a cap on how much a bank can lend to one borrower?"*
+
+::: {.model-flow}
+::: {.model-box}
+`grep("borrower")`<br>→ 23 articles,<br>none is the right one
+:::
+::: {.model-arrow}
+→
+:::
+::: {.model-box}
+reads the index…<br>"Limits to large exposures"?
+:::
+::: {.model-arrow}
+→
+:::
+::: {.model-box}
+`read_article(395)`<br>found, after several steps
+:::
+:::
+
+- **Good:** no index to build, always up to date, exact, follows cross-references ("as referred to in Article 92").
+- **Weak:** Article 395 never says "borrower" or "lend". The agent finds it only if **it** knows the jargon. Many steps, more latency.
+
+---
+
 ## Two phases
 
 **Indexing** — once, and again when the documents change:
@@ -120,7 +177,7 @@ LLM answers<br>from those chunks
 
 . . .
 
-Our corpus: the CRR, consolidated text of June 2026 — 737 articles, ~465,000 tokens. Indexing it takes **seconds** and costs **cents**.
+Our corpus: the CRR, consolidated text of June 2026 — 737 articles, ~370,000 tokens. Indexing it takes **seconds** and costs **cents**.
 
 ---
 
