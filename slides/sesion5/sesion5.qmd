@@ -668,6 +668,67 @@ MCP standardises how an app **discovers** a system's tools and how it **calls** 
 
 ---
 
+## A real MCP server
+
+```python
+from mcp.server.mcpserver import MCPServer
+
+mcp = MCPServer("demo-bank")
+
+@mcp.tool()
+def get_capital_ratios(reference_date: str) -> dict:
+    """Demo Bank's CET1 and LCR at a quarter end (YYYY-MM-DD).
+    Already computed: do not recompute."""
+    row = db.execute("SELECT ... WHERE reference_date = ?", (reference_date,)).fetchone()
+    return {"cet1_ratio_pct": ..., "lcr_pct": ...}
+
+mcp.run()
+```
+
+- A normal Python function, plus one decorator: the official MCP SDK does the rest.
+- Any MCP app can now use it: Claude Code with `claude mcp add demo-bank -- python server.py`; a LangChain agent through its MCP adapter.
+
+---
+
+## What travels over MCP
+
+```js
+// app → server: what do you offer?
+{"jsonrpc": "2.0", "id": 1, "method": "tools/list"}
+// server → app
+{"jsonrpc": "2.0", "id": 1, "result": {"tools": [{
+   "name": "get_capital_ratios",
+   "description": "Demo Bank's CET1 and LCR at a quarter end (YYYY-MM-DD)...",
+   "inputSchema": {"type": "object", "properties": {"reference_date": {"type": "string"}},
+                   "required": ["reference_date"]}}]}}
+
+// app → server, when the model asks for the tool
+{"jsonrpc": "2.0", "id": 2, "method": "tools/call",
+ "params": {"name": "get_capital_ratios", "arguments": {"reference_date": "2026-09-30"}}}
+// server → app
+{"jsonrpc": "2.0", "id": 2, "result": {"content": [{"type": "text",
+   "text": "{\"cet1_ratio_pct\": 11.59, \"lcr_pct\": 107.5}"}], "isError": false}}
+```
+
+Real messages from the server above (trimmed). Name, description and schema: exactly what goes into step 1.
+
+---
+
+## MCP vs a regular API
+
+| | Regular API | MCP server |
+|---|---|---|
+| Who reads it | a **developer**, in the documentation | the **model**, while it works |
+| What it offers | read the docs; every API is different | `tools/list`: the same for every server |
+| How to call it | its own addresses, formats and login | `tools/call`: the same for every server |
+| Connect it to a new app | write integration code | add the server in the app's settings |
+
+. . .
+
+MCP does not replace APIs: an MCP server usually **wraps** an existing one (the GitHub MCP server calls GitHub's API). It is an API **designed for AI apps**.
+
+---
+
 ## MCP in practice
 
 - **Who:** created by Anthropic (2024), now an open standard under the Linux Foundation, supported by OpenAI, Google and Microsoft.
