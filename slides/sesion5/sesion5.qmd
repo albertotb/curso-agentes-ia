@@ -38,7 +38,7 @@ From the previous sessions you know that an LLM:
 
 . . .
 
-And that an **agent** puts three pieces together:
+And that an **agent** is an LLM that uses **tools in a loop** to achieve a goal:
 
 ::: {.model-flow}
 ::: {.model-box}
