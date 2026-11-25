@@ -1046,10 +1046,10 @@ User
 :::
 :::
 
-- For the supervisor, `ask_aml_agent(question)` is **one more tool**: name, description, schema. It does not know there is an agent behind it.
+- For the supervisor, `ask_aml_agent(question)` is **one more tool**; it does not know there is an agent behind it.
 - The AML agent may read 200 transactions in ten steps; the supervisor only receives a **short answer**. Its context stays clean.
-- Sub-agents can run **in parallel**, and can be created **on demand** for one task (Claude Code does this).
-- The user only ever talks to the supervisor.
+- Sub-agents can run **in parallel**, or be created **on demand** for one task (Claude Code does this).
+- Unlike an LLM router, which picks **one** agent and steps aside, the supervisor stays in charge: *"Is C-0046 a credit risk **and** an AML concern?"* asks both agents and writes one answer.
 
 ---
 
