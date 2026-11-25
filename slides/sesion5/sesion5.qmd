@@ -549,7 +549,7 @@ This is the quarterly capital check you will build in notebook 02.
 
 ---
 
-## The ecosystem
+## The ecosystem {.smaller}
 
 | Framework | In one line |
 |---|---|
@@ -562,7 +562,8 @@ This is the quarterly capital check you will build in notebook 02.
 
 . . .
 
-Same ideas everywhere: model + tools + loop + state. Learn the ideas; the syntax changes every few months.
+- **Multi-agent:** your code routes the request to an agent, or one agent calls others **as tools**, or hands the conversation over.
+- Same ideas everywhere: model + tools + loop + state. Learn the ideas; the syntax changes every few months.
 
 . . .
 
