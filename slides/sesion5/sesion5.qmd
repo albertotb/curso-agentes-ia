@@ -66,31 +66,74 @@ The loop, plus the code around it that runs the tools, asks for approval, keeps 
 
 ---
 
-## Agents in banks today
+## A "digital employee" at BNY
 
-Not chat assistants: agents that **act** inside the bank.
+An AI agent on BNY's internal platform (Eliza), managed **like a member of staff**: its own login and credentials, a defined role, and a **human manager** who reviews its work. BNY reports more than 100 of them.
 
-| Bank | What the agents do |
-|---|---|
-| **BNY** | ~130 "digital employees": own login, email and Teams, and a human manager |
-| **Citi** | Arc, an internal platform to build agents (2026); the Devin coding agent for 14,000 engineers |
-| **Goldman Sachs** | Agents built with Anthropic for trade accounting and client onboarding |
-| **JPMorgan** | LLM Suite for 200,000+ employees; agents for software testing and research |
+Example, **payment repair**: some payment instructions arrive incomplete or inconsistent and used to stop for manual review.
 
-*Figures as reported by the banks.*
+::: {.model-flow}
+::: {.model-box}
+Incomplete<br>payment instruction
+:::
+::: {.model-arrow}
+→
+:::
+::: {.model-box}
+Agent checks it against<br>reference data and **repairs** it
+:::
+::: {.model-arrow}
+→
+:::
+::: {.model-stack}
+::: {.model-box}
+Sure: payment **proceeds**
+:::
+::: {.model-box}
+Unsure: **escalates** to a person<br>before the cut-off
+:::
+:::
+:::
+
+One such agent handles **over 10%** of BNY's payment repairs worldwide. Others fix security vulnerabilities in code.
 
 ---
 
-## Agents that pay
+## An agent that pays: Santander × Mastercard
 
-- **March 2026:** Santander and Mastercard complete Europe's first end-to-end payment executed by an AI agent, in a regulated bank.
-- **Santander and Visa:** agent-initiated payments in Latin America, within limits the customer consented to.
-- **Mastercard Agent Pay:** the agent gets a token, never the card (pilots with DBS and UOB in Singapore).
-- **American Express:** only verified agents can transact; customers are protected against agent errors.
+**March 2026:** Europe's first live payment executed end to end by an AI agent, through Santander's real payment systems.
+
+::: {.model-flow}
+::: {.model-box}
+**Customer**<br>gives the task<br>and the limits
+:::
+::: {.model-arrow}
+→
+:::
+::: {.model-box}
+**Agent**<br>registered and verified;<br>chooses and pays
+:::
+::: {.model-arrow}
+→
+:::
+::: {.model-box}
+**Santander** (issuer)<br>sees an *agent* payment,<br>applies its controls
+:::
+::: {.model-arrow}
+→
+:::
+::: {.model-box}
+**Merchant**<br>is paid
+:::
+:::
+
+- **End to end:** the human sets the goal; the agent carries out the purchase *and* the payment.
+- The agent pays with a **token** tied to it and to the customer's limits, never the card number (Mastercard Agent Pay).
+- A pilot, not yet a product; amount and merchant were not published.
 
 . . .
 
-Everyone asks for the same things: **consent, authentication, limits, traceability**. That is Block 3.
+Built on **consent, agent identity, limits, traceability**: Block 3.
 
 ---
 
