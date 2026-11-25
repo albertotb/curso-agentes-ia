@@ -205,30 +205,24 @@ The API **parses** the tag into `tool_calls`:
 
 ## 4. Your code → API: the next request
 
-:::: {.columns}
-::: {.column width="55%"}
+Your code runs the tool, **appends** the call and its result, and sends **everything** again, tools included:
+
 ```js
 "messages": [
   {"role": "system", "content": "..."},
-  {"role": "user", "content": "What was our CET1..."},
-  {"role": "assistant", "tool_calls": [...]},
-  {"role": "tool", "tool_call_id": "call_YZ2Y...",
-   "content": "{\"cet1_ratio_pct\": 11.59, ...}"}
+  {"role": "user", "content": "What was our CET1 ratio in September?"},
+  {"role": "assistant", "tool_calls": [...]},                                     // step 1: asks for a tool
+  {"role": "tool", "tool_call_id": "call_YZ2Y...", "content": "{...11.59...}"},   // added by your code
+  {"role": "assistant", "content": "Our CET1 ratio was 11.59% at 30 Sep 2026."},  // step 2: answers
+  {"role": "user", "content": "And in June?"}                                     // turn 2
 ]
 ```
-:::
-::: {.column width="4%"}
-:::
-::: {.column width="41%"}
-Your code runs the tool, **appends** the call and its result, and sends **everything** again, tools included.
-:::
-::::
 
 . . .
 
-- The model keeps no memory: "memory" is your code **re-sending** the history.
+- The model sees the whole history, so it understands "June" and calls `get_capital_ratios("2026-06-30")`.
+- It keeps no memory: "memory" is your code **re-sending** the history.
 - Each step is a longer prompt: it costs more, and eventually fills the **context window**.
-- The model now answers with text: *"Our CET1 ratio was 11.59% at 30 Sep 2026."*
 
 ---
 
