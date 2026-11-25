@@ -66,15 +66,17 @@ Question
 
 ## Three ways to answer from documents
 
-| | To build | Per question | Many documents | Breaks when |
-|---|---|---|---|---|
-| **1. All in the prompt** | **easy** | slow: ~370,000 tokens | **does not scale**: context limit, cost | details get lost |
-| **2. Agent that reads** | **medium**: agent + tools | **slowest**: 5–15 steps | more steps | other words than the text |
-| **3. RAG** | **most pieces**: chunks, embeddings, index | **fast**: ~2–3&nbsp;s | **scales well** | excerpts miss part of the answer |
+| | 1. All in the prompt | 2. Agent that reads | 3. RAG |
+|---|---|---|---|
+| **To build** | **easy** | **medium**: an agent + a few tools | **most pieces**: chunks, embeddings, index |
+| **Tokens per question** | ~370,000 (whole CRR) | a few thousand | ~2,500 |
+| **Time per question** | slow: reads everything | **slowest**: 5–15 steps of ~1.5&nbsp;s | **fast**: ~2–3&nbsp;s |
+| **With many documents** | **does not scale**: context limit, cost | more to search, more steps | **scales well**: search time barely grows |
+| **Breaks when** | details get lost | the question uses other words than the text | the excerpts miss part of the answer |
 
 . . .
 
-All three are used in practice, and they combine: our agent in notebook 03 has both a **search** tool (3) and a **read article** tool (2).
+They combine: the agent in notebook 03 has a **search** tool (3) and a **read article** tool (2).
 
 ---
 
