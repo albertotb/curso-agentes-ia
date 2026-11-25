@@ -295,6 +295,32 @@ for step in range(MAX_STEPS):                        # safety net 1: bounded loo
 
 ---
 
+## Code mode
+
+:::: {.columns}
+::: {.column width="52%"}
+The agent writes **code** that calls the tools. One tool, `run_code`; your tools are **functions** inside it:
+
+```python
+sep = get_capital_ratios("2026-09-30")
+jun = get_capital_ratios("2026-06-30")
+delta = sep["cet1_ratio_pct"] - jun["cet1_ratio_pct"]
+{"cet1_change_bp": round(delta * 100)}
+```
+
+A sandbox runs it; the model only sees the **final result**.
+:::
+::: {.column width="4%"}
+:::
+::: {.column width="44%"}
+- **Gains:** one step instead of three; intermediate data stays out of the context; loops and arithmetic in Python.
+- **Costs:** a sandbox for model-written code; harder to approve and debug.
+- **Where:** Pydantic AI (`CodeMode`), Claude API (programmatic tool calling), smolagents (`CodeAgent`).
+:::
+::::
+
+---
+
 ## Block 2 · Designing tools {.section-divider}
 
 Most of an agent's quality comes from its tools, not its prompt
