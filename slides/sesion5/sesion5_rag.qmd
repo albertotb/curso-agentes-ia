@@ -323,24 +323,6 @@ Each fails where the other works. **Hybrid search** runs both and merges the ran
 
 ---
 
-## Which one is better? Measure it
-
-A **golden set**: questions whose correct article we know. Is it in the top 5?
-
-| Method | Hits (12 questions) | Fails on |
-|---|---|---|
-| Semantic | 11 | *"What does Article 412 require?"* |
-| Keyword (BM25) | 10 | *"Which items qualify as CET1?"*, *"What must be deducted from CET1?"* |
-| Hybrid | 11 | *"Which items qualify as CET1?"* |
-
-. . .
-
-- No method wins everywhere: decide every change **by the number**, with 50–100 questions written with the business.
-- For exact references there is a simpler answer: if the user names an article, **look it up directly**.
-- If retrieval fails, **no prompt fixes the answer**.
-
----
-
 ## Block 4 · Generation {.section-divider}
 
 Answers you can check
@@ -385,7 +367,7 @@ Question: {question}
 The retrieval becomes two more **tools** of the agent from notebook 02:
 
 - `search_regulation(query)` — hybrid search, for natural-language questions;
-- `get_article(number)` — direct lookup, when an article is named.
+- `get_article(number)` — if an article is named, look it up directly.
 
 . . .
 
@@ -422,7 +404,7 @@ The agent decides when to search, can search several times, and combines the reg
 - RAG = **retrieve** + **augment** + **generate**: answers from *your* documents, with sources from *your* code.
 - **Chunk** along the document's structure, and keep the context in every chunk.
 - **Semantic** search finds meaning, **keyword** search finds identifiers, **hybrid** combines them; exact references deserve a direct lookup.
-- **Measure** retrieval with a golden set; check citations against sources.
+- If retrieval fails, **no prompt fixes the answer**; check citations against sources.
 - As a **tool**, retrieval is one more capability of the agent.
 
 . . .
