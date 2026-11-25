@@ -372,6 +372,7 @@ Worst case: a wrong action, with consequences.
 
 - **Human in the loop**: the agent proposes the action and its arguments; a person approves, edits or rejects.
 - Beware **automation bias** (session 3): a reviewer who approves everything is not a control.
+- **In between:** rules by risk (e.g. auto-approve a limit review below €10,000), or a second model that escalates only suspicious calls: a filter, not a guarantee.
 - Log every tool call: the trace *is* the audit trail.
 
 . . .
