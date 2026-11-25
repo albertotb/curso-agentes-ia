@@ -216,6 +216,62 @@ Searching by meaning
 
 ---
 
+## An embedding model is not a chatbot
+
+| | Generative LLM | Embedding model |
+|---|---|---|
+| Input → output | text → **text**, one token at a time | text → **one vector** (e.g. 1,536 numbers), in one pass |
+| Used for | answering, writing, deciding | comparing: search, clustering, duplicates |
+| Size and cost | large; the expensive part | small; the whole CRR costs **under one cent** |
+| Example | GPT-5.4 mini, Gemini Flash-Lite | `text-embedding-3-small`, `gemini-embedding-001` |
+
+. . .
+
+Both are transformers that read text the same way; they are **trained for different jobs**. In RAG they work as a team: the embedding model **finds**, the LLM **answers**.
+
+---
+
+## How an embedding model learns
+
+It is trained on millions of **pairs of texts that mean the same**:
+
+::: {.model-flow}
+::: {.model-box}
+a question<br>↔ its answer
+:::
+::: {.model-box}
+a title<br>↔ its paragraph
+:::
+::: {.model-box}
+a sentence<br>↔ its translation
+:::
+::: {.model-box}
+a query<br>↔ the page people clicked
+:::
+:::
+
+- Each pair is pulled **closer** together; unrelated texts are pushed **apart**.
+- After enough pairs, texts with the same meaning end up near each other, even with no word in common, or in another language.
+- Nobody decides what each of the 1,536 numbers means: the model learns it.
+
+---
+
+## A map of meaning
+
+![](img/embedding_map.png){fig-align="center" width="88%"}
+
+*A sketch: real embeddings have 1,536 dimensions, not two. A search finds the points nearest to the question.*
+
+---
+
+## Similarity is an angle
+
+![](img/embedding_angle.png){fig-align="center" width="95%"}
+
+Real values from `text-embedding-3-small`. We compare **directions** (the cosine of the angle), not lengths.
+
+---
+
 ## Text → vector
 
 An embedding model turns a text into a vector (1,536 or 3,072 numbers). Similar meanings point in similar directions; we compare them with the **cosine similarity**.
