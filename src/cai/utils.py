@@ -4,6 +4,7 @@ import contextlib
 import json
 import os
 import sqlite3
+import threading
 import urllib.request
 from pathlib import Path
 
@@ -70,11 +71,27 @@ def data_path(filename: str) -> Path:
     return local
 
 
-def load_bank_db() -> sqlite3.Connection:
+class BankDB:
+    """`db.execute(...)` on the synthetic Demo Bank database; rows behave like dicts (`dict(row)`).
+
+    One SQLite connection per thread: agents run parallel tool calls in threads, and a shared
+    connection fails with "InterfaceError: bad parameter or other API misuse".
+    """
+
+    def __init__(self, path: Path):
+        self.path = path
+        self.local = threading.local()
+
+    def execute(self, sql: str, params=()) -> sqlite3.Cursor:
+        if not hasattr(self.local, "conn"):
+            self.local.conn = sqlite3.connect(self.path)
+            self.local.conn.row_factory = sqlite3.Row
+        return self.local.conn.execute(sql, params)
+
+
+def load_bank_db() -> BankDB:
     """Connection to the synthetic Demo Bank database; rows behave like dicts (`dict(row)`)."""
-    db = sqlite3.connect(data_path("bank.db"), check_same_thread=False)
-    db.row_factory = sqlite3.Row
-    return db
+    return BankDB(data_path("bank.db"))
 
 
 def load_crr_articles() -> list[dict]:
