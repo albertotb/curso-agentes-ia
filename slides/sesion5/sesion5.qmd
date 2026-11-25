@@ -578,15 +578,15 @@ There is no prompt that fixes this reliably. The defences are **architectural**:
 
 ## Whose permissions?
 
-- The agent acts **on behalf of a user**: never more access than that user (sub-agents: less). No shared admin keys.
-- With broad access, a prompt injection turns the agent into a **confused deputy**: it uses *its* permissions for someone else's instructions.
-- Permissions are enforced **in the tools and systems**, not in the prompt: "do not show other customers' data" is not a control; a tool that filters by the user's entitlements is.
+An agent works **on behalf of someone**. Treat it like a new member of staff, not like the IT administrator.
+
+- **Never more access than the person it works for.** If an analyst can only see their own clients, so can their agent.
+- **Why:** if the agent can see everything, a malicious document it reads (previous slide) can make it use that access for someone else.
+- **The limit lives in the systems, not in the prompt.** "Do not show other customers' data" in the instructions is a request; a tool that only returns permitted customers is a control.
 
 . . .
 
-Classic access management (roles, OAuth, least privilege, segregation of duties), for a new kind of user.
-
-*See: OWASP Top 10 for Agentic Applications (ASI03); NIST NCCoE on agent identity.*
+The same rules banks already apply to people: access by role, and a second pair of eyes for important actions.
 
 ---
 
