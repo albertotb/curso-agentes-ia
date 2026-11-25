@@ -152,6 +152,8 @@ The model **never runs anything**: it returns a structured request. **Your code*
 
 :::: {.columns}
 ::: {.column width="50%"}
+**Sent:** one text prompt
+
 ```text
 <|system|>
 You are an assistant for Demo Bank...
@@ -161,27 +163,33 @@ You can call these tools:
 <|user|>
 What was our CET1 ratio in September?
 <|assistant|>
+```
+
+**Returned:** what the model writes
+
+```text
 <tool_call>
 {"name": "get_capital_ratios",
  "arguments": {"reference_date": "2026-09-30"}}
 </tool_call>
 ```
-
-. . .
-
-- `tool_calls` is OpenAI's format, and most providers offer an **OpenAI-compatible** API.
-- `arguments` can be invalid JSON unless **strict mode** is on.
 :::
 ::: {.column width="4%"}
 :::
 ::: {.column width="46%"}
-It is all **one text prompt**: system prompt + tools + the whole conversation, re-sent at every step.
-
-1. The API **renders** it with the model's own template.
+1. The API **renders** it with the model's template.
 2. The model was **post-trained** to write tool calls in that format.
 3. The API **parses** them into `tool_calls`.
+
+. . .
+
+Your code appends the call and the tool result, and sends **everything** again.
 :::
 ::::
+
+::: {.notes}
+`tool_calls` is OpenAI's format; most providers also offer an OpenAI-compatible API, besides their own. `arguments` is generated text: it can be invalid JSON unless strict mode is on.
+:::
 
 ---
 
