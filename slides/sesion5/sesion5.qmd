@@ -1020,7 +1020,7 @@ The router can be:
 
 . . .
 
-Cheap, predictable, auditable: a **workflow** with agents inside. Weak when a request mixes two topics.
+A **workflow** with agents inside: predictable paths, since the request always ends in one of the listed agents, even if an LLM picks which. Weak when a request mixes two topics.
 
 ---
 
