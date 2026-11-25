@@ -66,11 +66,11 @@ Question
 
 ## Three ways to answer from documents
 
-| | How | Per question | Time | Breaks when |
+| | To build | Per question | Many documents | Breaks when |
 |---|---|---|---|---|
-| **1. Everything in the prompt** | paste all the documents | ~370,000 tokens | slow: reads everything, every time | the corpus is large, or changes |
-| **2. An agent that reads** | index + tools to search and open | a few thousand tokens | **slowest**: 5–15 steps of ~1.5&nbsp;s each | the question uses other words than the text |
-| **3. RAG** | the 5 most relevant excerpts by **meaning** | ~2,500 tokens | **fast**: one search + one answer, ~2–3&nbsp;s | the excerpts miss part of the answer |
+| **1. All in the prompt** | **easy** | slow: ~370,000 tokens | **does not scale**: context limit, cost | details get lost |
+| **2. Agent that reads** | **medium**: agent + tools | **slowest**: 5–15 steps | more steps | other words than the text |
+| **3. RAG** | **most pieces**: chunks, embeddings, index | **fast**: ~2–3&nbsp;s | **scales well** | excerpts miss part of the answer |
 
 . . .
 
