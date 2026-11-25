@@ -82,8 +82,8 @@ sequenceDiagram
     U->>C: "What was our CET1 ratio in September?"
     C->>M: question + description of the tools
     M-->>C: call get_capital_ratios(reference_date="2026-09-30")
-    C->>T: get_capital_ratios("2026-09-30")
-    T-->>C: {"cet1_ratio_pct": 11.59, ...}
+    C->>T: get_capital_ratios(<br/>"2026-09-30")
+    T-->>C: {"cet1_ratio_pct": 11.59, …}
     C->>M: tool result
     M-->>C: "Our CET1 ratio was 11.59% at 30 Sep 2026."
     C->>U: answer
