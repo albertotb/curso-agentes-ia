@@ -539,6 +539,21 @@ MCP server: **ticketing / email**
 
 ---
 
+## Multi-agent systems
+
+| Pattern | Who picks the agent | Example |
+|---|---|---|
+| Router | your **code** | classify the request → credit agent or AML agent |
+| Supervisor | an **LLM**: other agents are its tools | `ask_aml_agent(question)` |
+| Hand-off | the **active agent** passes the conversation on | `transfer_to_aml_agent()` |
+
+. . .
+
+- **MCP** connects an agent to tools; **A2A** (Agent2Agent, v1.0, Linux Foundation) connects agents to each other, also across companies.
+- Start with **one** agent: each extra agent adds tokens, failure points and audit work.
+
+---
+
 ## Block 5 · Frameworks {.section-divider}
 
 What they automate, and what they do not
@@ -658,7 +673,6 @@ This is the quarterly capital check you will build in notebook 02.
 
 . . .
 
-- **Multi-agent:** your code routes the request to an agent, or one agent calls others **as tools**, or hands the conversation over.
 - Same ideas everywhere: model + tools + loop + state. Learn the ideas; the syntax changes every few months.
 
 . . .
