@@ -151,7 +151,7 @@ The model **never runs anything**: it returns a structured request. **Your code*
 ## Under the hood
 
 :::: {.columns}
-::: {.column width="55%"}
+::: {.column width="50%"}
 ```text
 <|system|>
 You are an assistant for Demo Bank...
@@ -172,7 +172,9 @@ What was our CET1 ratio in September?
 - `tool_calls` is OpenAI's format, and most providers offer an **OpenAI-compatible** API.
 - `arguments` can be invalid JSON unless **strict mode** is on.
 :::
-::: {.column width="45%"}
+::: {.column width="4%"}
+:::
+::: {.column width="46%"}
 It is all **one text prompt**: system prompt + tools + the whole conversation, re-sent at every step.
 
 1. The API **renders** it with the model's own template.
