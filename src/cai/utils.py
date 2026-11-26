@@ -94,6 +94,15 @@ def load_bank_db() -> BankDB:
     return BankDB(data_path("bank.db"))
 
 
+def load_bank_tables() -> dict:
+    """Every table of the Demo Bank database as a pandas DataFrame, keyed by table name."""
+    import pandas as pd
+
+    with contextlib.closing(sqlite3.connect(data_path("bank.db"))) as con:
+        names = [r[0] for r in con.execute("SELECT name FROM sqlite_master WHERE type = 'table'")]
+        return {name: pd.read_sql(f"SELECT * FROM {name}", con) for name in names}
+
+
 def load_crr_articles() -> list[dict]:
     """The CRR, one dict per article (see data/README.md for the fields)."""
     with open(data_path("crr_articles.jsonl"), encoding="utf-8") as f:
