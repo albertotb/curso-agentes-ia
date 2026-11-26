@@ -29,6 +29,7 @@ quarto preview slides/sesion5/sesion5.qmd  # slides con recarga en vivo
 ## Flujo de trabajo con notebooks
 
 - Tras editar cualquier `.ipynb`, ejecutar `uv run ruff format notebooks/` y `uv run ruff check notebooks/`.
+- Los notebooks deben conservar `metadata.language_info.name = "python"`: sin ese campo ruff los salta sin avisar.
 
 ## Flujo de trabajo con slides (Quarto)
 
