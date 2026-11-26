@@ -26,3 +26,6 @@ slides/**/*.html
 slides/**/*_files/
 
 **/*.quarto_ipynb
+
+# playwright-cli snapshots
+.playwright-cli/
