@@ -24,7 +24,7 @@ Group project: each group (~4 students) builds an agent for a banking or regulat
 
 ## Running the notebooks
 
-- **Colab:** open a notebook with its badge above. Its first cell, `%pip install -q git+https://github.com/albertotb/curso-agentes-ia`, installs the dependencies and the course helpers (`from cai import utils`); the data is downloaded on first use.
+- **Colab:** open a notebook with its badge above. Its first cell (it also works in any Python 3.11–3.13 environment with pip), `%pip install -q https://github.com/albertotb/curso-agentes-ia/archive/refs/heads/main.zip`, installs the dependencies and the course helpers (`from cai import utils`); the data is downloaded on first use.
 - **Local:** see [Local setup](#local-setup).
 
 ## API keys
