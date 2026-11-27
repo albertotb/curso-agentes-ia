@@ -40,10 +40,48 @@ It may even get the figure right: the CRR is public and was in its training data
 
 ---
 
+## Keyword search (BM25)
+
+The classic search engine: score each text by the **words it shares** with the question. A made-up example:
+
+```{=html}
+<div class="bm25">
+<p><span class="stop">Is there a</span> <span class="kw-none">limit</span> <span class="stop">on a</span> <span class="kw-loan">loan</span> <span class="stop">to one</span> <span class="kw-borrower">borrower</span><span class="stop">?</span>
+<br>→ <span class="kw-none">limit</span>: in no sentence · <span class="kw-loan">loan</span>: in 1 of 5, weight 1.10 · <span class="kw-borrower">borrower</span>: in 2 of 5, weight 0.34</p>
+<div class="row"><span class="sentence">The interest rate on a <span class="kw-loan">loan</span> depends on the <span class="kw-borrower">borrower</span>'s rating.</span><span class="barwrap"><span class="bar" style="display:block;width:100%"></span></span><span class="score">1.41</span></div>
+<div class="row"><span class="sentence">A <span class="kw-borrower">borrower</span> who misses a payment for 90 days is in default.</span><span class="barwrap"><span class="bar" style="display:block;width:23%"></span></span><span class="score">0.33</span></div>
+<div class="row"><span class="sentence">Banks must report the liquidity coverage ratio every month.</span><span class="barwrap"></span><span class="score">0.00</span></div>
+<div class="row"><span class="sentence">Capital requirements apply to every bank in the union.</span><span class="barwrap"></span><span class="score">0.00</span></div>
+<div class="row"><span class="sentence answer">✓ An exposure to a single client shall not exceed 25% of capital.</span><span class="barwrap"></span><span class="score">0.00</span></div>
+</div>
+```
+
+. . .
+
+- Common words are dropped; **rarer words count more** (*loan* > *borrower*); repeats and long texts count less.
+- **No word in common, no score**: the sentence that answers gets 0.
+
+---
+
+## Keyword vs semantic search
+
+**Semantic search** ranks texts by **meaning**: the closest vectors win (how: Block 1). Both methods on the **CRR** (EU regulation on bank capital, 737 articles), top 2 results:
+
+: {tbl-colwidths="[14,43,43]"}
+
+| | *"Is there a cap on how much a bank can lend to one borrower?"* | *"What does Article 412 require?"* |
+|---|---|---|
+| **Semantic** | ✓ **Limits to large exposures**<br>Cap on the own funds requirement… | ✗ General principles<br>✗ Prudential requirements |
+| **Keyword** | ✗ Requirements for receivables<br>✗ Calculation of the leverage ratio | Compliance with liquidity requirements<br>✓ **Liquidity coverage requirement** (Art. 412) |
+| **Why** | The right article shares no word with the question: *cap*/limits, *lend*/exposure | "412" is an **identifier**: a number has no meaning to embed |
+
+---
+
 ## Three ways to answer from documents
 
 | | 1. All in the prompt | 2. Agent that reads | 3. RAG |
 |---|---|---|---|
+| **Finds the text by** | no search: the LLM reads it all | **keywords** (`grep`); the LLM picks the words | **meaning** (semantic), often + keywords |
 | **To build** | **easy** | **medium**: an agent + a few tools | **most pieces**: chunks, embeddings, index |
 | **Tokens per question** | ~370,000 (whole CRR) | a few thousand | ~2,500 |
 | **Time per question** | slow: reads everything | **slowest**: 5–15 steps of ~1.5&nbsp;s | **fast**: ~2–3&nbsp;s |
@@ -275,29 +313,17 @@ Meaning, words, or both
 
 ---
 
-## Two ways to search
+## Combine them: hybrid search
 
-**Semantic search**: embed the question and return the chunks whose vectors are closest to it (Block 2). It matches **meaning**.
+Each method fails where the other works, so production systems run **both**:
 
-**Keyword search** (BM25, the classic search-engine ranking): score each chunk by how many of the question's words it contains, rare words counting more. It matches **words**: no model, just counting.
-
----
-
-## Same questions, both methods
-
-We search the **CRR** (the EU regulation on bank capital, 737 articles) with two questions. Top 2 results of each method, by article title:
-
-: {tbl-colwidths="[14,43,43]"}
-
-| | *"Is there a cap on how much a bank can lend to one borrower?"* | *"What does Article 412 require?"* |
-|---|---|---|
-| **Semantic** | ✓ **Limits to large exposures**<br>Cap on the own funds requirement… | ✗ General principles<br>✗ Prudential requirements |
-| **Keyword** | ✗ Requirements for receivables<br>✗ Calculation of the leverage ratio | Compliance with liquidity requirements<br>✓ **Liquidity coverage requirement** (Art. 412) |
-| **Why** | The right article shares no word with the question: *cap*/limits, *lend*/exposure | "412" is an **identifier**: a number has no meaning to embed |
+- **Hybrid search**: run both searches and merge the two rankings (*reciprocal rank fusion*: each result scores `1 / (60 + rank)` in each list).
+- **Reranker**: a specialised model, or the LLM itself, reads the top 15–50 candidates and reorders them.
+- **Direct lookup**: if the question names an article, fetch it; no search needed.
 
 . . .
 
-Each fails where the other works. **Hybrid search** runs both and merges the rankings; a **reranker** (a specialised model or the LLM) can then reorder the top candidates.
+Why keyword search finds *"Article 412"*: of the 1,127 chunks, *article* appears in **all** of them (weight ≈ 0), *412* in only **5**.
 
 ---
 

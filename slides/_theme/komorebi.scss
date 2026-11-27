@@ -212,3 +212,36 @@ $presentation-heading-font: "Source Serif Pro", Palatino, FreeSerif, serif !defa
     gap: 0.3em;
   }
 }
+
+// Búsqueda por palabras (BM25): frases con las palabras clave resaltadas y barra de puntuación.
+.reveal .bm25 {
+  font-size: 0.62em;
+  margin: 0.4em 0 0.5em;
+  .kw-loan { background: #f2c14e; padding: 0 0.15em; border-radius: 3px; }
+  .kw-borrower { background: #fbe3a6; padding: 0 0.15em; border-radius: 3px; }
+  .kw-none { text-decoration: line-through; color: #999; }
+  .stop { color: #aaa; }
+  .row { display: flex; align-items: center; gap: 0.6em; padding: 0.22em 0; border-bottom: 1px solid #ddd; }
+  .sentence { flex: 0 0 62%; }
+  .barwrap { flex: 1; }
+  .bar { height: 0.8em; background: #6b6b6b; border-radius: 2px; }
+  .score { min-width: 2.5em; font-variant-numeric: tabular-nums; }
+  .answer { font-weight: 700; }
+}
+
+// Chunking: el mismo texto cortado de dos maneras, un color por trozo.
+.reveal .chunks {
+  display: flex;
+  gap: 1.2em;
+  font-size: 0.42em;
+  line-height: 1.35;
+  .col { flex: 1; }
+  .col h4 { font-size: 1.5em; margin: 0 0 0.3em; }
+  .c0 { background: #dbe9f6; }
+  .c1 { background: #fbe3a6; }
+  .c2 { background: #d9eed9; }
+  .c3 { background: #f6d9e4; }
+  .chunk { display: block; padding: 0.25em 0.4em; margin-bottom: 0.3em; border-radius: 3px; white-space: pre-wrap; }
+  .cut { color: #c0392b; font-weight: 700; }
+  .hdr { font-weight: 700; color: #333; }
+}
