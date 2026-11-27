@@ -284,6 +284,34 @@ What is a "piece" of a document?
 
 ---
 
+## What chunking does to a text
+
+The start of Article 92, cut two ways (with a small size so the cuts show):
+
+```{=html}
+<div class="chunks">
+<div class="col"><h4>Fixed size: every 160 characters</h4><span class="chunk c0">1. Subject to Articles 93 and 94, institutions shall at all times satisfy the following own funds requirements:
+(a) a Common Equity Tier 1 capital ratio of 4,5 </span><span class="chunk c1"><span class=cut>✂ </span>%;
+(b) a Tier 1 capital ratio of 6 %;
+(c) a total capital ratio of 8 %;
+(d) a leverage ratio of 3 %.
+1a. In addition to the requirement laid down in point (d) o</span><span class="chunk c2"><span class=cut>✂ </span>f paragraph 1 of this Article, a G-SII shall maintain a leverage ratio buffer equal to the G-SIIs total exposure measure referred to in Article 429(4) of this R</span><span class="chunk c3"><span class=cut>✂ </span>egulation multiplied by 50 % of the G-SII buffer rate applicable to the G-SII in accordance with Article 131 of Directive 2013/36/EU.</span></div>
+<div class="col"><h4>By structure: at numbered paragraphs, with a header</h4><span class="chunk c0"><span class="hdr">CRR Article 92 — Own funds requirements</span>
+1. Subject to Articles 93 and 94, institutions shall at all times satisfy the following own funds requirements:
+(a) a Common Equity Tier 1 capital ratio of 4,5 %;
+(b) a Tier 1 capital ratio of 6 %;
+(c) a total capital ratio of 8 %;
+(d) a leverage ratio of 3 %.</span><span class="chunk c1"><span class="hdr">CRR Article 92 — Own funds requirements</span>
+1a. In addition to the requirement laid down in point (d) of paragraph 1 of this Article, a G-SII shall maintain a leverage ratio buffer equal to the G-SIIs total exposure measure referred to in Article 429(4) of this Regulation multiplied by 50 % of the G-SII buffer rate applicable to the G-SII in accordance with Article 131 of Directive 2013/36/EU.</span></div>
+</div>
+```
+
+. . .
+
+On the left, the first piece ends in *"ratio of 4,5"* and the next starts with *"%;"*: neither says that **CET1 must be at least 4.5 %**, and no piece says which article it comes from.
+
+---
+
 ## Cut where the document has seams
 
 One text, **one vector**: a 60,000-character article averages all its topics and matches no question well. We embed **pieces**.
