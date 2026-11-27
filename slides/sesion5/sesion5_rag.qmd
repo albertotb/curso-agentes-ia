@@ -64,17 +64,59 @@ The classic search engine: score each text by the **words it shares** with the q
 
 ---
 
-## Keyword vs semantic search
+## Search test 1: other words
 
-**Semantic search** ranks texts by **meaning**: the closest vectors win (how: Block 1). Both methods on the **CRR** (EU regulation on bank capital, 737 articles), top 2 results:
+**Semantic search** ranks texts by how close their **meaning** is to the question (how a model measures meaning: Block 1).
 
-: {tbl-colwidths="[14,43,43]"}
+*"Is there a cap on how much a bank can lend to one borrower?"* The answer is in **Art. 395 · Limits to large exposures**. Top 3 articles in the CRR:
 
-| | *"Is there a cap on how much a bank can lend to one borrower?"* | *"What does Article 412 require?"* |
-|---|---|---|
-| **Semantic** | ✓ **Limits to large exposures**<br>Cap on the own funds requirement… | ✗ General principles<br>✗ Prudential requirements |
-| **Keyword** | ✗ Requirements for receivables<br>✗ Calculation of the leverage ratio | Compliance with liquidity requirements<br>✓ **Liquidity coverage requirement** (Art. 412) |
-| **Why** | The right article shares no word with the question: *cap*/limits, *lend*/exposure | "412" is an **identifier**: a number has no meaning to embed |
+. . .
+
+:::: {.columns style="font-size: 0.8em;"}
+::: {.column width="50%"}
+**Keyword search (BM25)**
+
+1. Requirements for receivables ✗
+2. Calculation of the leverage ratio ✗
+3. Definitions for credit risk ✗
+:::
+::: {.column width="50%"}
+**Semantic search**
+
+1. **Limits to large exposures** ✓
+2. Cap on the own funds requirement…
+3. Credit risk mitigation techniques…
+:::
+::::
+
+Art. 395 never says *cap*, *lend* or *borrower*: keyword search **cannot** find it.
+
+---
+
+## Search test 2: an exact reference
+
+*"What does Article 412 require?"* The answer is in **Art. 412 · Liquidity coverage requirement**. Top 3 articles in the CRR:
+
+. . .
+
+:::: {.columns style="font-size: 0.8em;"}
+::: {.column width="50%"}
+**Keyword search (BM25)**
+
+1. Compliance with liquidity requirements
+2. **Liquidity coverage requirement** ✓
+3. Liquidity
+:::
+::: {.column width="50%"}
+**Semantic search**
+
+1. General principles ✗
+2. Prudential requirements ✗
+3. Compliance with liquidity… ✗
+:::
+::::
+
+"412" is a number, not a meaning: semantic search finds texts **about** liquidity, not the article.
 
 ---
 
