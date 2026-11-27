@@ -480,16 +480,32 @@ Question: {question}
 
 ---
 
-## RAG as a tool
+## RAG in practice: build it or use a service
 
-The retrieval becomes two more **tools** of the agent from notebook 02:
+**Build it** with a framework (LangChain, LlamaIndex): document loaders, a splitter, an embedding model, a vector store, and a **retriever** that ties them together. Notebook 03 does the same steps by hand.
 
-- `search_regulation(query)` — hybrid search, for natural-language questions;
-- `get_article(number)` — if an article is named, look it up directly.
+**Use a service**: upload the files, and the provider chunks, embeds, indexes and searches them. OpenAI *file search*, Azure AI Search, Amazon Bedrock Knowledge Bases, Vertex AI RAG Engine.
 
 . . .
 
-*"Does Demo Bank meet the CRR minimum own funds ratios at 30 September 2026?"*
+For a bank the choice is about **control**: how documents are cut, which metadata and permissions travel with each chunk, and where the data lives. A service is faster to start; building gives you every knob.
+
+---
+
+## Pipeline or agent
+
+: {tbl-colwidths="[30,35,35]"}
+
+| | Pipeline | Agentic RAG |
+|---|---|---|
+| **Who decides to search** | your code, every question | the model, when needed |
+| **Searches per question** | one | none, one or several, rephrasing |
+| **Other data** | no | yes: the bank's figures, other tools |
+| **Predictability** | high | lower: more steps |
+
+. . .
+
+The usual tools: `search(query, filters)` → the top *k* chunks; `fetch(document)` → the whole document. In notebook 03: `search_regulation` and `get_article`.
 
 ::: {.model-flow}
 ::: {.model-box}
@@ -499,7 +515,7 @@ The retrieval becomes two more **tools** of the agent from notebook 02:
 \+
 :::
 ::: {.model-box}
-`search_regulation`<br>("minimum own funds requirements…")
+`search_regulation`<br>("minimum own funds…")
 :::
 ::: {.model-arrow}
 →
@@ -508,10 +524,6 @@ The retrieval becomes two more **tools** of the agent from notebook 02:
 CET1 11.59 % vs 4.5 %<br>(Art. 92(1)) …
 :::
 :::
-
-The agent decides when to search, can search several times, and combines the regulation with the bank's figures. This is **agentic RAG**.
-
-. . .
 
 **→ Notebook 03, sections 6–8**
 
@@ -523,7 +535,7 @@ The agent decides when to search, can search several times, and combines the reg
 - **Chunk** along the document's structure, and keep the context in every chunk.
 - **Semantic** search finds meaning, **keyword** search finds identifiers, **hybrid** combines them; exact references deserve a direct lookup.
 - If retrieval fails, **no prompt fixes the answer**; check citations against sources.
-- As a **tool**, retrieval is one more capability of the agent.
+- Run it as a fixed **pipeline**, or give the agent **search** and **fetch** tools (agentic RAG).
 
 . . .
 
