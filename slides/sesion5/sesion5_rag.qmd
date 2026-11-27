@@ -43,24 +43,28 @@ It may even get the figure right: the CRR is public and was in its training data
 
 ## Keyword search (BM25)
 
-The classic search engine: score each text by the **words it shares** with the question. A made-up example:
+Score each text by the **words it shares** with the question (made-up example):
 
 ```{=html}
 <div class="bm25">
-<p><span class="stop">Is there a</span> <span class="kw-none">limit</span> <span class="stop">on a</span> <span class="kw-loan">loan</span> <span class="stop">to one</span> <span class="kw-borrower">borrower</span><span class="stop">?</span>
-<br>→ <span class="kw-none">limit</span>: in no sentence · <span class="kw-loan">loan</span>: in 1 of 5, weight 1.10 · <span class="kw-borrower">borrower</span>: in 2 of 5, weight 0.34</p>
-<div class="row"><span class="sentence">The interest rate on a <span class="kw-loan">loan</span> depends on the <span class="kw-borrower">borrower</span>'s rating.</span><span class="barwrap"><span class="bar" style="display:block;width:100%"></span></span><span class="score">1.41</span></div>
-<div class="row"><span class="sentence">A <span class="kw-borrower">borrower</span> who misses a payment for 90 days is in default.</span><span class="barwrap"><span class="bar" style="display:block;width:23%"></span></span><span class="score">0.33</span></div>
-<div class="row"><span class="sentence">Banks must report the liquidity coverage ratio every month.</span><span class="barwrap"></span><span class="score">0.00</span></div>
-<div class="row"><span class="sentence">Capital requirements apply to every bank in the union.</span><span class="barwrap"></span><span class="score">0.00</span></div>
-<div class="row"><span class="sentence answer">✓ An exposure to a single client shall not exceed 25% of capital.</span><span class="barwrap"></span><span class="score">0.00</span></div>
+<p><span class="stop">What are the</span> <span class="k1">liquidity</span> <span class="k2">buffer</span> <span class="k3">requirements</span><span class="stop">?</span>
+&nbsp;→&nbsp; weight: <span class="k1">liquidity</span> 1.54 (in 1 of 6 sentences) · <span class="k2">buffer</span> 1.03 (in 2) · <span class="k3">requirements</span> 0.69 (in 3)</p>
+<div class="row"><span class="sentence">Banks must hold a <span class="k1">liquidity</span> <span class="k2">buffer</span> for 30 days of stress.</span><span class="barwrap"><span class="k1" style="width:60%"></span><span class="k2" style="width:40%"></span></span><span class="score">2.40</span></div>
+<div class="row"><span class="sentence">The countercyclical <span class="k2">buffer</span> is set by each national authority.</span><span class="barwrap"><span class="k2" style="width:46%"></span></span><span class="score">1.10</span></div>
+<div class="row"><span class="sentence">Capital <span class="k3">requirements</span>, leverage <span class="k3">requirements</span>, reporting <span class="k3">requirements</span>.</span><span class="barwrap"><span class="k3" style="width:45%"></span></span><span class="score">1.09</span></div>
+<div class="row"><span class="sentence">Capital <span class="k3">requirements</span> apply to banks.</span><span class="barwrap"><span class="k3" style="width:33%"></span></span><span class="score">0.80</span></div>
+<div class="row"><span class="sentence">Capital <span class="k3">requirements</span> apply to banks, branches and subsidiaries across the union from day one.</span><span class="barwrap"><span class="k3" style="width:23%"></span></span><span class="score">0.54</span></div>
+<div class="row"><span class="sentence">Mortgages are secured by residential property.</span><span class="barwrap"></span><span class="score">0.00</span></div>
 </div>
 ```
 
 . . .
 
-- Common words are dropped; **rarer words count more** (*loan* > *borrower*); repeats and long texts count less.
-- **No word in common, no score**: the sentence that answers gets 0.
+::: {style="font-size: 0.8em;"}
+- **Rare words weigh more**: *liquidity* > *requirements*; *what, are, the* are dropped.
+- **Repeats add less**: *requirements* three times scores 1.09, not 3 × 0.80.
+- **Long texts count less**: the same *requirements* scores 0.54 in a long sentence.
+:::
 
 ---
 

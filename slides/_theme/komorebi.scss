@@ -213,20 +213,20 @@ $presentation-heading-font: "Source Serif Pro", Palatino, FreeSerif, serif !defa
   }
 }
 
-// Búsqueda por palabras (BM25): frases con las palabras clave resaltadas y barra de puntuación.
+// Búsqueda por palabras (BM25): un color por palabra clave, barra apilada con lo que aporta cada una.
 .reveal .bm25 {
-  font-size: 0.62em;
-  margin: 0.4em 0 0.5em;
-  .kw-loan { background: #f2c14e; padding: 0 0.15em; border-radius: 3px; }
-  .kw-borrower { background: #fbe3a6; padding: 0 0.15em; border-radius: 3px; }
-  .kw-none { text-decoration: line-through; color: #999; }
-  .stop { color: #aaa; }
-  .row { display: flex; align-items: center; gap: 0.6em; padding: 0.22em 0; border-bottom: 1px solid #ddd; }
-  .sentence { flex: 0 0 62%; }
-  .barwrap { flex: 1; }
-  .bar { height: 0.8em; background: #6b6b6b; border-radius: 2px; }
-  .score { min-width: 2.5em; font-variant-numeric: tabular-nums; }
-  .answer { font-weight: 700; }
+  font-size: 0.6em;
+  margin: 0.3em 0 0.5em;
+  .k1 { background: #f2c14e; padding: 0 0.15em; border-radius: 3px; }
+  .k2 { background: #9cc3e6; padding: 0 0.15em; border-radius: 3px; }
+  .k3 { background: #b7dcb0; padding: 0 0.15em; border-radius: 3px; }
+  .stop { color: #999; }
+  .row { display: flex; align-items: center; gap: 0.6em; padding: 0.2em 0; border-bottom: 1px solid #ddd; }
+  .sentence { flex: 0 0 72%; }
+  .barwrap { flex: 1; display: flex; height: 0.85em; }
+  .barwrap span { height: 100%; }
+  .barwrap .k1, .barwrap .k2, .barwrap .k3 { padding: 0; border-radius: 0; }
+  .score { min-width: 2.5em; text-align: right; font-variant-numeric: tabular-nums; }
 }
 
 // Chunking: el mismo texto cortado de dos maneras, un color por trozo.
