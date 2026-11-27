@@ -313,26 +313,24 @@ Both are transformers that read text the same way; they are **trained for differ
 
 ## How an embedding model learns
 
-It is trained on millions of **pairs of texts that mean the same**:
+Trained on millions of **pairs of texts that belong together** (CRR texts literal, search made up):
 
-::: {.model-flow}
-::: {.model-box}
-a question<br>↔ its answer
-:::
-::: {.model-box}
-a title<br>↔ its paragraph
-:::
-::: {.model-box}
-a sentence<br>↔ its translation
-:::
-::: {.model-box}
-a query<br>↔ the page people clicked
-:::
-:::
+: {tbl-colwidths="[22,78]"}
 
-- Each pair is pulled **closer** together; unrelated texts are pushed **apart**.
-- After enough pairs, texts with the same meaning end up near each other, even with no word in common, or in another language.
+| | |
+|---|---|
+| question ↔ answer | *"How much capital must a bank hold?"* ↔ *"Institutions shall at all times satisfy … a Common Equity Tier 1 capital ratio of 4,5 %"* |
+| title ↔ paragraph | *"Limits to large exposures"* ↔ *"An institution shall not incur an exposure to a client … which exceeds 25 % of its Tier 1 capital"* |
+| text ↔ translation | *"capital conservation buffer"* ↔ *"colchón de conservación de capital"* |
+| search ↔ click | *"lcr meaning"* ↔ *"Liquidity coverage ratio: what it is and how it is calculated"* |
+| **pushed apart** | *"How much capital must a bank hold?"* ✗ *"Mortgage rates for first-time buyers"* |
+
+. . .
+
+::: {style="font-size: 0.8em;"}
+- After millions of pairs, texts that mean the same end up close, even with no word in common or in another language.
 - Nobody decides what each of the 1,536 numbers means: the model learns it.
+:::
 
 ---
 
