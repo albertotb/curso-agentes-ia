@@ -469,6 +469,8 @@ Question: {question}
 
 ## What goes wrong
 
+Most bad answers come from the **search**, not the model: look first at the excerpts it was given.
+
 | Symptom | Usual cause |
 |---|---|
 | Right topic, wrong article | chunks too large, or no header with the article |
@@ -477,6 +479,10 @@ Question: {question}
 | Confident answer, no support | weak prompt, no citation check |
 | Out-of-date rule | old version indexed: re-index when the source changes |
 | Strange instructions followed | **prompt injection** inside a document (Thursday) |
+
+. . .
+
+**Log** each question with its excerpts and answer: it tells a search problem from a model problem, and it is what an auditor will ask for.
 
 ---
 
