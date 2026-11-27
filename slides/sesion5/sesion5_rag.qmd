@@ -36,31 +36,7 @@ It may even get the figure right: the CRR is public and was in its training data
 
 . . .
 
-**Retrieval-augmented generation (RAG):**
-
-::: {.model-flow}
-::: {.model-box}
-Question
-:::
-::: {.model-arrow}
-→
-:::
-::: {.model-box}
-**Retrieve**<br>relevant excerpts
-:::
-::: {.model-arrow}
-→
-:::
-::: {.model-box}
-**Augment**<br>the prompt with them
-:::
-::: {.model-arrow}
-→
-:::
-::: {.model-box}
-**Generate**<br>answer + citations
-:::
-:::
+**The fix:** put the relevant text from **our** documents in front of the model, and have it answer from that text with sources. The question is **how to pick that text**.
 
 ---
 
@@ -123,7 +99,9 @@ reads the index…<br>"Limits to large exposures"?
 
 ---
 
-## Two phases
+## Option 3: RAG
+
+Retrieval-augmented generation: **retrieve** the relevant excerpts, **augment** the prompt with them, **generate** an answer with citations. In two phases:
 
 **Indexing** — once, and again when the documents change:
 
