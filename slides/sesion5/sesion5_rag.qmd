@@ -334,6 +334,22 @@ Trained on millions of **pairs of texts that belong together** (CRR texts litera
 
 ---
 
+## Text → vector
+
+An embedding model turns a text into a vector (1,536 or 3,072 numbers). Similar meanings point in similar directions; we compare them with the **cosine similarity**.
+
+| | capital conservation buffer |
+|---|---|
+| colchón de conservación de capital | **0.47** |
+| a bank must hold extra CET1 capital in good times | **0.45** |
+| mortgage interest rate for first-time buyers | 0.15 |
+
+. . .
+
+- A translation and a paraphrase score high; mortgages do not. Use **the same model** for documents and questions.
+
+---
+
 ## A map of meaning
 
 ![](img/embedding_map.png){fig-align="center" width="88%"}
@@ -350,20 +366,19 @@ Real values from `text-embedding-3-small`. We compare **directions** (the cosine
 
 ---
 
-## Text → vector
+## Where the vectors live: vector stores
 
-An embedding model turns a text into a vector (1,536 or 3,072 numbers). Similar meanings point in similar directions; we compare them with the **cosine similarity**.
+A database that keeps the vectors and finds the **nearest** ones fast, for millions of chunks and many users:
 
-| | capital conservation buffer |
-|---|---|
-| colchón de conservación de capital | **0.47** |
-| a bank must hold extra CET1 capital in good times | **0.45** |
-| mortgage interest rate for first-time buyers | 0.15 |
+- **Store** vectors with text and **metadata** (document, date, version).
+- **Search** the top *k* in milliseconds.
+- **Filter** by metadata: only rules in force.
+- **Control access**: users only see what they may read.
+- **Update** one document without re-indexing all.
 
 . . .
 
-- A translation and a paraphrase score high; mortgages do not. Use **the same model** for documents and questions.
-- A **vector store** finds the nearest vectors: here a NumPy matrix; in production Chroma, pgvector… with filters and **access control per document**.
+In practice: **pgvector** (PostgreSQL), **Elasticsearch**, **Qdrant**, **Pinecone**, **Chroma** (prototypes), or a cloud service (Azure AI Search, Vertex AI).
 
 ---
 
