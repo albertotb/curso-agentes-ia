@@ -480,18 +480,6 @@ Question: {question}
 
 ---
 
-## RAG in practice: build it or use a service
-
-**Build it** with a framework (LangChain, LlamaIndex): document loaders, a splitter, an embedding model, a vector store, and a **retriever** that ties them together. Notebook 03 does the same steps by hand.
-
-**Use a service**: upload the files, and the provider chunks, embeds, indexes and searches them. OpenAI *file search*, Azure AI Search, Amazon Bedrock Knowledge Bases, Vertex AI RAG Engine.
-
-. . .
-
-For a bank the choice is about **control**: how documents are cut, which metadata and permissions travel with each chunk, and where the data lives. A service is faster to start; building gives you every knob.
-
----
-
 ## Pipeline or agent
 
 : {tbl-colwidths="[30,35,35]"}
