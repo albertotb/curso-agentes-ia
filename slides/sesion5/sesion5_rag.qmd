@@ -161,36 +161,7 @@ Our corpus: the CRR, consolidated text of June 2026 — 737 articles, ~370,000 t
 
 ---
 
-## Block 1 · Chunking {.section-divider}
-
-What is a "piece" of a document?
-
----
-
-## Cut where the document has seams
-
-We retrieve **pieces**, not documents: Article 4 alone is 60,000 characters, and too much context dilutes the answer and costs money.
-
-| Strategy | How | Problem / when |
-|---|---|---|
-| Fixed size | every *N* characters | cuts sentences and lists; a piece loses its context |
-| Recursive | paragraphs, then sentences, then characters | good generic default |
-| **By structure** | article → numbered paragraphs | legal and regulatory text: natural units, citable |
-
-. . .
-
-And give every chunk a **header** so it still says where it comes from:
-
-```text
-CRR Article 92 — Own funds requirements (PART THREE — CAPITAL REQUIREMENTS)
-1. Subject to Articles 93 and 94, institutions shall at all times satisfy ...
-```
-
-The CRR becomes **1,127 chunks** of at most 3,000 characters.
-
----
-
-## Block 2 · Embeddings {.section-divider}
+## Block 1 · Embeddings {.section-divider}
 
 Searching by meaning
 
@@ -266,6 +237,35 @@ An embedding model turns a text into a vector (1,536 or 3,072 numbers). Similar 
 
 - A translation and a paraphrase score high; mortgages do not. Use **the same model** for documents and questions.
 - A **vector store** finds the nearest vectors: here a NumPy matrix; in production Chroma, pgvector… with filters and **access control per document**.
+
+---
+
+## Block 2 · Chunking {.section-divider}
+
+What is a "piece" of a document?
+
+---
+
+## Cut where the document has seams
+
+One text, **one vector**: a 60,000-character article averages all its topics and matches no question well. We embed **pieces**.
+
+| Strategy | How | Problem / when |
+|---|---|---|
+| Fixed size | every *N* characters | cuts sentences and lists; a piece loses its context |
+| Recursive | paragraphs, then sentences, then characters | good generic default |
+| **By structure** | article → numbered paragraphs | legal and regulatory text: natural units, citable |
+
+. . .
+
+And give every chunk a **header** so it still says where it comes from:
+
+```text
+CRR Article 92 — Own funds requirements (PART THREE — CAPITAL REQUIREMENTS)
+1. Subject to Articles 93 and 94, institutions shall at all times satisfy ...
+```
+
+The CRR becomes **1,127 chunks** of at most 3,000 characters.
 
 ---
 
