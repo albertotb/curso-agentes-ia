@@ -535,7 +535,7 @@ CET1 11.59 % vs 4.5 %<br>(Art. 92(1)) …
 - **Chunk** along the document's structure, and keep the context in every chunk.
 - **Semantic** search finds meaning, **keyword** search finds identifiers, **hybrid** combines them; exact references deserve a direct lookup.
 - If retrieval fails, **no prompt fixes the answer**; check citations against sources.
-- Run it as a fixed **pipeline**, or give the agent **search** and **fetch** tools (agentic RAG).
+- A fixed **pipeline**, or **tools** the agent calls (agentic RAG).
 
 . . .
 
