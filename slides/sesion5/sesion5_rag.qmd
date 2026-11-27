@@ -420,9 +420,11 @@ On the left, the first piece ends in *"ratio of 4,5"* and the next starts with *
 
 One text, **one vector**: a 60,000-character article averages all its topics and matches no question well. We embed **pieces**.
 
+: {tbl-colwidths="[18,38,44]"}
+
 | Strategy | How | Problem / when |
 |---|---|---|
-| Fixed size | every *N* characters | cuts sentences and lists; a piece loses its context |
+| Fixed size | every *N* characters, usually with **overlap** (10–20 %) | cuts sentences and lists; the overlap keeps a cut sentence whole in one piece |
 | Recursive | paragraphs, then sentences, then characters | good generic default |
 | **By structure** | article → numbered paragraphs | legal and regulatory text: natural units, citable |
 
