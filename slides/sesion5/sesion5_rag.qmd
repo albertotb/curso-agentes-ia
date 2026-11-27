@@ -11,18 +11,19 @@ format:
 
 ## Where we left off
 
-Yesterday: an agent is an **LLM + tools + a loop**, and it can read Demo Bank's data.
+Yesterday the agent worked with **data**: a question becomes a query, the answer a number (*CET1 at 30 Sep → 11.59 %*).
 
 . . .
 
-Today, one more tool: **search the regulation**.
+Much of what a bank knows is in **documents**: regulation, policies, contracts, inspection reports. They are different:
 
-- How does a model answer from **our** documents — the CRR, internal policies, inspection reports?
-- How do we know the answer comes from them, and from **which article**?
+- No columns: the answer is **a few sentences** in hundreds of pages.
+- In **other words** than the question: *"exposure to a client"*, not *"lend to a borrower"*.
+- It must say **where it comes from**: which document, which article.
 
 . . .
 
-**→ Notebook 03 · RAG over the CRR**
+Today: **finding the right passage**, and answering from it. **→ Notebook 03**
 
 ---
 
