@@ -29,3 +29,5 @@ slides/**/*_files/
 
 # playwright-cli snapshots
 .playwright-cli/
+/index.html
+/_site/

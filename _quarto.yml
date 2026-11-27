@@ -1,6 +1,7 @@
 project:
   type: default
   render:
+    - "index.qmd"
     - "slides/**/*.qmd"
 
 # Common configuration for all the course slides; each session can override it in its own YAML.

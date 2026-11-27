@@ -1,6 +1,6 @@
 name: Publish slides
 
-# Renders the Quarto slides and publishes them to GitHub Pages.
+# Renders the Quarto slides and the index page (index.qmd) and publishes them to GitHub Pages.
 # The rendered HTML is never committed: it travels as a Pages artifact.
 
 on:
@@ -9,6 +9,7 @@ on:
     paths:
       - "slides/**"
       - "_quarto.yml"
+      - "index.qmd"
       - ".github/workflows/slides.yml"
   workflow_dispatch:
 
@@ -33,21 +34,6 @@ jobs:
 
       - name: Render slides
         run: quarto render --output-dir _site
-
-      - name: Build index page
-        run: |
-          {
-            echo '<!doctype html><html lang="en"><head><meta charset="utf-8">'
-            echo '<meta name="viewport" content="width=device-width, initial-scale=1">'
-            echo '<title>AI Agents for Banking and Regulation · Slides</title>'
-            echo '<style>body{font-family:Georgia,serif;max-width:40rem;margin:4rem auto;padding:0 1rem;line-height:1.6}li{margin:.5rem 0}</style>'
-            echo '</head><body><h1>AI Agents for Banking and Regulation</h1><ul>'
-            for f in $(cd _site && find slides -name '*.html' -not -path '*_files/*' | sort); do
-              title=$(grep -o -m1 '<title>[^<]*</title>' "_site/$f" | sed 's/<[^>]*>//g')
-              echo "<li><a href=\"$f\">${title:-$f}</a></li>"
-            done
-            echo '</ul></body></html>'
-          } > _site/index.html
 
       - uses: actions/upload-pages-artifact@v3
         with:

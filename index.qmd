@@ -1,0 +1,42 @@
+---
+title: "AI Agents for Banking and Regulation"
+subtitle: "Master in Banking and Financial Regulation · Data Analytics · University of Navarra, 2026-27"
+author: "Alberto Torres · Komorebi AI"
+format:
+  html:
+    theme: cosmo
+    mainfont: "Source Serif Pro"
+    page-layout: article
+    toc: false
+    header-includes: |
+      <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Serif+Pro:ital,wght@0,400;0,700;1,400&display=swap">
+---
+
+Materials for sessions 5 and 6 of the AI block: what an agent is and how it works in code, and how to make a model answer from your own documents. Everything is in the [GitHub repository](https://github.com/albertotb/curso-agentes-ia).
+
+## Slides
+
+: {tbl-colwidths="[16,68,16]"}
+
+| Session | Topic | |
+|---|---|---|
+| 5 · Thursday | **Tools and agents**: tool calling, the agent loop, good tools, security, MCP, frameworks | [Open slides](slides/sesion5/sesion5.html) |
+| 5 · Friday | **Retrieval-augmented generation**: keyword and semantic search, embeddings, chunking, answers with citations | [Open slides](slides/sesion5/sesion5_rag.html) |
+
+Press `F` for full screen and `Esc` for the slide overview.
+
+## Notebooks
+
+: {tbl-colwidths="[30,52,18]"}
+
+| Notebook | Content | |
+|---|---|---|
+| 01 · Tool calling from scratch | The agent loop by hand; tool design; human approval for actions | [![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/albertotb/curso-agentes-ia/blob/main/notebooks/sesion5/01_tool_calling_from_scratch.ipynb) |
+| 02 · Agents with LangChain and LangGraph | `create_agent`, middleware, memory, LangGraph workflows | [![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/albertotb/curso-agentes-ia/blob/main/notebooks/sesion5/02_agents_with_langchain.ipynb) |
+| 03 · RAG over the CRR | Chunking, embeddings, search, answers with citations, RAG in an agent | [![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/albertotb/curso-agentes-ia/blob/main/notebooks/sesion5/03_rag_over_regulation.ipynb) |
+
+The notebooks need an OpenAI or Gemini API key: see [API keys](https://github.com/albertotb/curso-agentes-ia#api-keys) in the repository. To run them on your laptop instead of Colab, see [Local setup](https://github.com/albertotb/curso-agentes-ia#local-setup).
+
+## Session 6
+
+Group project: each group builds an agent for a banking or regulatory use case and presents it to a panel. Materials will be published here.
