@@ -41,94 +41,11 @@ It may even get the figure right: the CRR is public and was in its training data
 
 ---
 
-## Keyword search (BM25)
-
-Score each text by the **words it shares** with the question (made-up example):
-
-```{=html}
-<div class="bm25">
-<p><span class="stop">What are the</span> <span class="k1">liquidity</span> <span class="k2">buffer</span> <span class="k3">requirements</span><span class="stop">?</span>
-&nbsp;→&nbsp; weight: <span class="k1">liquidity</span> 1.54 (in 1 of 6 sentences) · <span class="k2">buffer</span> 1.03 (in 2) · <span class="k3">requirements</span> 0.69 (in 3)</p>
-<div class="row"><span class="sentence">Banks must hold a <span class="k1">liquidity</span> <span class="k2">buffer</span> for 30 days of stress.</span><span class="barwrap"><span class="k1" style="width:60%"></span><span class="k2" style="width:40%"></span></span><span class="score">2.40</span></div>
-<div class="row"><span class="sentence">The countercyclical <span class="k2">buffer</span> is set by each national authority.</span><span class="barwrap"><span class="k2" style="width:46%"></span></span><span class="score">1.10</span></div>
-<div class="row"><span class="sentence">Capital <span class="k3">requirements</span>, leverage <span class="k3">requirements</span>, reporting <span class="k3">requirements</span>.</span><span class="barwrap"><span class="k3" style="width:45%"></span></span><span class="score">1.09</span></div>
-<div class="row"><span class="sentence">Capital <span class="k3">requirements</span> apply to banks.</span><span class="barwrap"><span class="k3" style="width:33%"></span></span><span class="score">0.80</span></div>
-<div class="row"><span class="sentence">Capital <span class="k3">requirements</span> apply to banks, branches and subsidiaries across the union from day one.</span><span class="barwrap"><span class="k3" style="width:23%"></span></span><span class="score">0.54</span></div>
-<div class="row"><span class="sentence">Mortgages are secured by residential property.</span><span class="barwrap"></span><span class="score">0.00</span></div>
-</div>
-```
-
-. . .
-
-::: {style="font-size: 0.8em;"}
-- **Rare words weigh more**: *liquidity* > *requirements*; *what, are, the* are dropped.
-- **Repeats add less**: *requirements* three times scores 1.09, not 3 × 0.80.
-- **Long texts count less**: the same *requirements* scores 0.54 in a long sentence.
-:::
-
----
-
-## Search test 1: other words
-
-**Semantic search** ranks texts by how close their **meaning** is to the question (how a model measures meaning: Block 1).
-
-*"Is there a cap on how much a bank can lend to one borrower?"* The answer is in **Art. 395 · Limits to large exposures**. Top 3 articles in the CRR:
-
-. . .
-
-:::: {.columns style="font-size: 0.8em;"}
-::: {.column width="50%"}
-**Keyword search (BM25)**
-
-1. Requirements for receivables ✗
-2. Calculation of the leverage ratio ✗
-3. Definitions for credit risk ✗
-:::
-::: {.column width="50%"}
-**Semantic search**
-
-1. **Limits to large exposures** ✓
-2. Cap on the own funds requirement…
-3. Credit risk mitigation techniques…
-:::
-::::
-
-Art. 395 never says *cap*, *lend* or *borrower*: keyword search **cannot** find it.
-
----
-
-## Search test 2: an exact reference
-
-*"What does Article 412 require?"* The answer is in **Art. 412 · Liquidity coverage requirement**. Top 3 articles in the CRR:
-
-. . .
-
-:::: {.columns style="font-size: 0.8em;"}
-::: {.column width="50%"}
-**Keyword search (BM25)**
-
-1. Compliance with liquidity requirements
-2. **Liquidity coverage requirement** ✓
-3. Liquidity
-:::
-::: {.column width="50%"}
-**Semantic search**
-
-1. General principles ✗
-2. Prudential requirements ✗
-3. Compliance with liquidity… ✗
-:::
-::::
-
-"412" is a number, not a meaning: semantic search finds texts **about** liquidity, not the article.
-
----
-
 ## Three ways to answer from documents
 
 | | 1. All in the prompt | 2. Agent that reads | 3. RAG |
 |---|---|---|---|
-| **Finds the text by** | no search: the LLM reads it all | **keywords** (`grep`); the LLM picks the words | **meaning** (semantic), often + keywords |
+| **Finds the text by** | no search: the LLM reads it all | searching for **words** (`grep`) | searching by **meaning** |
 | **To build** | **easy** | **medium**: an agent + a few tools | **most pieces**: chunks, embeddings, index |
 | **Tokens per question** | ~370,000 (whole CRR) | a few thousand | ~2,500 |
 | **Time per question** | slow: reads everything | **slowest**: 5–15 steps of ~1.5&nbsp;s | **fast**: ~2–3&nbsp;s |
@@ -246,7 +163,134 @@ Our corpus: the CRR, consolidated text of June 2026 — 737 articles, ~370,000 t
 
 ---
 
-## Block 1 · Embeddings {.section-divider}
+## Block 1 · Search {.section-divider}
+
+How RAG finds the right text: words, meaning, or both
+
+---
+
+## Keyword search (BM25)
+
+Score each text by the **words it shares** with the question (`grep` in option 2 is the crude version: exact match, no score). A made-up example:
+
+```{=html}
+<div class="bm25">
+<p><span class="stop">What are the</span> <span class="k1">liquidity</span> <span class="k2">buffer</span> <span class="k3">requirements</span><span class="stop">?</span>
+&nbsp;→&nbsp; weight: <span class="k1">liquidity</span> 1.54 (in 1 of 6) · <span class="k2">buffer</span> 1.03 (in 2) · <span class="k3">requirements</span> 0.69 (in 3)</p>
+<div class="row"><span class="sentence">Banks must hold a <span class="k1">liquidity</span> <span class="k2">buffer</span> for 30 days of stress.</span><span class="barwrap"><span class="k1" style="width:60%"></span><span class="k2" style="width:40%"></span></span><span class="score">2.57</span></div>
+<div class="row"><span class="sentence">The countercyclical <span class="k2">buffer</span> is set by each national authority.</span><span class="barwrap"><span class="k2" style="width:46%"></span></span><span class="score">1.17</span></div>
+<div class="row"><span class="sentence">Capital <span class="k3">requirements</span>, leverage <span class="k3">requirements</span>, reporting <span class="k3">requirements</span>.</span><span class="barwrap"><span class="k3" style="width:44%"></span></span><span class="score">1.12</span></div>
+<div class="row"><span class="sentence">Capital <span class="k3">requirements</span> apply to banks.</span><span class="barwrap"><span class="k3" style="width:33%"></span></span><span class="score">0.84</span></div>
+<div class="row"><span class="sentence">Capital <span class="k3">requirements</span> apply to banks, branches and subsidiaries across the union from day one.</span><span class="barwrap"><span class="k3" style="width:23%"></span></span><span class="score">0.59</span></div>
+<div class="row"><span class="sentence">High-quality liquid assets must cover net cash outflows over a stress period.</span><span class="barwrap"></span><span class="score">0.00</span></div>
+</div>
+```
+
+. . .
+
+::: {style="font-size: 0.8em;"}
+- **Rare words weigh more**: *liquidity* > *requirements*; *what, are, the* are dropped.
+- **Repeats add less**: *requirements* three times scores 1.12, not 3 × 0.84.
+- **Long texts count less**: the same *requirements* scores 0.59 in a long sentence.
+:::
+
+---
+
+## Semantic search
+
+Score each text by how close its **meaning** is to the question, whatever the words. Same question, same sentences (similarity from 0 to 1):
+
+```{=html}
+<div class="bm25">
+<p>What are the liquidity buffer requirements?</p>
+<div class="row"><span class="sentence">Banks must hold a liquidity buffer for 30 days of stress.</span><span class="barwrap"><span class="ks" style="width:68%"></span></span><span class="score">0.68</span></div>
+<div class="row"><span class="sentence">High-quality liquid assets must cover net cash outflows over a stress period.</span><span class="barwrap"><span class="ks" style="width:56%"></span></span><span class="score">0.56</span></div>
+<div class="row"><span class="sentence">Capital requirements, leverage requirements, reporting requirements.</span><span class="barwrap"><span class="ks" style="width:52%"></span></span><span class="score">0.52</span></div>
+<div class="row"><span class="sentence">The countercyclical buffer is set by each national authority.</span><span class="barwrap"><span class="ks" style="width:49%"></span></span><span class="score">0.49</span></div>
+<div class="row"><span class="sentence">Capital requirements apply to banks.</span><span class="barwrap"><span class="ks" style="width:45%"></span></span><span class="score">0.45</span></div>
+<div class="row"><span class="sentence">Capital requirements apply to banks, branches and subsidiaries across the union from day one.</span><span class="barwrap"><span class="ks" style="width:39%"></span></span><span class="score">0.39</span></div>
+</div>
+```
+
+. . .
+
+::: {style="font-size: 0.8em;"}
+- The sentence on **liquid assets** shares no word with the question (*liquid* is not *liquidity*), yet comes **second**: same topic. With BM25 it scored 0.
+- Nothing scores 0: every text is a bit similar, so we keep the **top *k***.
+- How a model measures meaning: **Block 2 · Embeddings**.
+:::
+
+---
+
+## Search test 1: other words
+
+*"Is there a cap on how much a bank can lend to one borrower?"* The answer is in **Art. 395 · Limits to large exposures**. Top 3 articles in the CRR:
+
+. . .
+
+:::: {.columns style="font-size: 0.8em;"}
+::: {.column width="50%"}
+**Keyword search (BM25)**
+
+1. Requirements for receivables ✗
+2. Calculation of the leverage ratio ✗
+3. Definitions for credit risk ✗
+:::
+::: {.column width="50%"}
+**Semantic search**
+
+1. **Limits to large exposures** ✓
+2. Cap on the own funds requirement…
+3. Credit risk mitigation techniques…
+:::
+::::
+
+Art. 395 never says *cap*, *lend* or *borrower*: keyword search **cannot** find it.
+
+---
+
+## Search test 2: an exact reference
+
+*"What does Article 412 require?"* The answer is in **Art. 412 · Liquidity coverage requirement**. Top 3 articles in the CRR:
+
+. . .
+
+:::: {.columns style="font-size: 0.8em;"}
+::: {.column width="50%"}
+**Keyword search (BM25)**
+
+1. Compliance with liquidity requirements
+2. **Liquidity coverage requirement** ✓
+3. Liquidity
+:::
+::: {.column width="50%"}
+**Semantic search**
+
+1. General principles ✗
+2. Prudential requirements ✗
+3. Compliance with liquidity… ✗
+:::
+::::
+
+"412" is a number, not a meaning: semantic search finds texts **about** liquidity, not the article.
+
+---
+
+## Combine them: hybrid search
+
+Each method fails where the other works, so production systems run **both**:
+
+- **Hybrid search**: run both searches and merge the two rankings (*reciprocal rank fusion*: each result scores `1 / (60 + rank)` in each list).
+- **Reranker**: a specialised model, or the LLM itself, reads the top 15–50 candidates and reorders them.
+- **Direct lookup**: if the question names an article, fetch it; no search needed.
+
+. . .
+
+Why keyword search finds *"Article 412"*: *article* appears in 582 of the 737 articles (weight 0.24), *412* in only **4** (weight 5.1).
+
+---
+
+## Block 2 · Embeddings {.section-divider}
 
 Searching by meaning
 
@@ -325,7 +369,7 @@ An embedding model turns a text into a vector (1,536 or 3,072 numbers). Similar 
 
 ---
 
-## Block 2 · Chunking {.section-divider}
+## Block 3 · Chunking {.section-divider}
 
 What is a "piece" of a document?
 
@@ -379,26 +423,6 @@ CRR Article 92 — Own funds requirements (PART THREE — CAPITAL REQUIREMENTS)
 ```
 
 The CRR becomes **1,127 chunks** of at most 3,000 characters.
-
----
-
-## Block 3 · Search {.section-divider}
-
-Meaning, words, or both
-
----
-
-## Combine them: hybrid search
-
-Each method fails where the other works, so production systems run **both**:
-
-- **Hybrid search**: run both searches and merge the two rankings (*reciprocal rank fusion*: each result scores `1 / (60 + rank)` in each list).
-- **Reranker**: a specialised model, or the LLM itself, reads the top 15–50 candidates and reorders them.
-- **Direct lookup**: if the question names an article, fetch it; no search needed.
-
-. . .
-
-Why keyword search finds *"Article 412"*: of the 1,127 chunks, *article* appears in **all** of them (weight ≈ 0), *412* in only **5**.
 
 ---
 
